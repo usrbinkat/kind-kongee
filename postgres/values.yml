@@ -1,0 +1,248 @@
+# install postgres bitnami/postgresql --namespace kong --values ./postgres.yml
+namespace: kong
+nameOverride: postgresql
+global:
+  postgresql:
+    storageClass: ''
+
+      #image:
+      #  registry: docker.io
+      #  repository: bitnami/postgresql
+      #  tag: 11.11.0-debian-10-r82
+      #  pullPolicy: IfNotPresent
+      #  debug: true
+
+volumePermissions:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/bitnami-shell
+    tag: "10"
+    pullPolicy: Always
+  securityContext:
+    runAsUser: 0
+
+securityContext:
+  enabled: true
+  fsGroup: 1001
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001
+
+serviceAccount:
+  enabled: false
+psp:
+  create: false
+rbac:
+  create: false
+replication:
+  enabled: false
+  user: repl_user
+  password: repl_password
+  readReplicas: 1
+  synchronousCommit: 'off'
+  numSynchronousReplicas: 0
+  applicationName: my_application
+
+postgresqlDatabase: kong
+postgresqlUsername: kong
+postgresqlPassword: kong
+postgresqlPostgresPassword: psqladmin
+postgresqlDataDir: /bitnami/postgresql/data
+extraEnv: []
+primaryAsStandBy:
+  enabled: false
+audit:
+  logHostname: false
+  logConnections: false
+  logDisconnections: false
+  pgAuditLog: ""
+  pgAuditLogCatalog: "off"
+  clientMinMessages: error
+  logLinePrefix: ""
+  logTimezone: ""
+
+postgresqlSharedPreloadLibraries: "pgaudit"
+postgresqlMaxConnections:
+postgresqlPostgresConnectionLimit:
+postgresqlDbUserConnectionLimit:
+postgresqlTcpKeepalivesInterval:
+postgresqlTcpKeepalivesIdle:
+postgresqlTcpKeepalivesCount:
+postgresqlStatementTimeout:
+postgresqlPghbaRemoveFilters:
+terminationGracePeriodSeconds: 30
+
+ldap:
+  enabled: false
+  url: ''
+  server: ''
+  port: ''
+  prefix: ''
+  suffix: ''
+  baseDN: ''
+  bindDN: ''
+  bind_password:
+  search_attr: ''
+  search_filter: ''
+  scheme: ''
+  tls: {}
+
+service:
+  type: ClusterIP
+# type: LoadBalancer
+# loadBalancerIP: 192.168.1.32
+  port: 5432
+  annotations: {}
+shmVolume:
+  enabled: true
+  chmod:
+    enabled: true
+
+persistence:
+  enabled: true
+# existingClaim:
+  mountPath: /bitnami/postgresql
+  subPath: ''
+  accessModes:
+    - ReadWriteOnce
+  size: 4Gi
+  annotations: {}
+  selector: {}
+
+updateStrategy:
+  type: RollingUpdate
+
+primary:
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+  labels: {}
+  annotations: {}
+  podLabels: {}
+  podAnnotations: {}
+  priorityClassName: ''
+  extraInitContainers: []
+  extraVolumeMounts: []
+  extraVolumes: []
+  sidecars: []
+  service: {}
+
+readReplicas:
+  podAffinityPreset: ""
+  podAntiAffinityPreset: soft
+  nodeAffinityPreset:
+    type: ""
+    key: ""
+    values: []
+  labels: {}
+  affinity: {}
+  podLabels: {}
+  tolerations: []
+  annotations: {}
+  nodeSelector: {}
+  podAnnotations: {}
+  priorityClassName: ''
+  extraInitContainers: []
+  extraVolumeMounts: []
+  extraVolumes: []
+  sidecars: []
+  service: {}
+  persistence:
+    enabled: true
+  resources: {}
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+
+networkPolicy:
+  enabled: false
+  allowExternal: true
+  explicitNamespacesSelector: {}
+
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 10
+  successThreshold: 1
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+  successThreshold: 1
+
+tls:
+  enabled: false
+  preferServerCiphers: true
+  certificatesSecret: ''
+  certFilename: ''
+  certKeyFilename: ''
+  certCAFilename:
+  crlFilename:
+
+metrics:
+  enabled: false
+  service:
+    type: ClusterIP
+    annotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/port: '9187'
+    loadBalancerIP:
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+  prometheusRule:
+    enabled: false
+    additionalLabels: {}
+    namespace: ''
+    rules: []
+  image:
+    registry: docker.io
+    repository: bitnami/postgres-exporter
+    tag: 0.9.0-debian-10-r55
+    pullPolicy: IfNotPresent
+  extraEnvVars: {}
+  securityContext:
+    enabled: false
+    runAsUser: 1001
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+extraDeploy: []
+commonAnnotations: {}
+customStartupProbe: {}
+customLivenessProbe: {}
+customReadinessProbe: {}

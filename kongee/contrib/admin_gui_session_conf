@@ -1,0 +1,1 @@
+{"storage":"kong","secret":"mysecretpassword","cookie_name":"admin_session","cookie_samesite":"off","cookie_secure":false}

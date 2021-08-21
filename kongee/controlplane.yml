@@ -1,0 +1,249 @@
+# helm install controlplane kong/kong --namespace kong --values ./controlplane.yml --set ingressController.installCRDs=false
+namespace: kong
+replicaCount: 1
+image:
+  repository: kong/kong-gateway
+  tag: "2.5"
+deployment:
+  kong:
+    enabled: true
+    daemonset: false
+env:
+  role: control_plane
+  plugins: bundled
+  log_level: debug
+  nginx_worker_processes: "2"
+  status_listen:  0.0.0.0:8100
+  cluster_listen: 0.0.0.0:8005
+  cluster_telemetry_listen: 0.0.0.0:8006
+  cluster_data_plane_purge_delay: 60
+  lua_package_path: /opt/?.lua;;
+  prefix: /kong_prefix/
+  password:
+    valueFrom:
+      secretKeyRef:
+        name: kong-enterprise-superuser-password
+        key: password
+
+  proxy_stream_error_log: /dev/stdout
+  proxy_stream_access_log: /dev/stdout
+  status_error_log: /dev/stdout
+  proxy_access_log: /dev/stdout
+  proxy_error_log: /dev/stdout
+
+  database: "postgres"
+  pg_user: kong
+  pg_database: kong
+  pg_password:
+    valueFrom:
+      secretKeyRef:
+         name: kong-postgres-password
+         key: password
+  pg_host: "postgres-postgresql.kong.svc.cluster.local"
+  pg_ssl_version: tlsv1_2
+  pg_ssl: on
+
+  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt 
+
+  vitals: on
+  admin_gui_protocol: https
+  admin_gui_url: "https://manager.kong.braincraft.io/"
+  admin_api_uri: "https://manager.kong.braincraft.io/api"
+  admin_gui_host: "manager.kong.braincraft.io"
+  admin_ssl_cert: /etc/secrets/kong-tls/tls.crt
+  admin_ssl_cert_key: /etc/secrets/kong-tls/tls.key
+  admin_gui_ssl_cert: /etc/secrets/kong-tls/tls.crt
+  admin_gui_ssl_cert_key: /etc/secrets/kong-tls/tls.key
+  admin_gui_access_log: /dev/stdout
+  admin_gui_error_log: /dev/stdout
+  admin_access_log: /dev/stdout
+  admin_error_log: /dev/stdout
+
+  portal: on
+  portal_cors_origins: "*"
+  portal_gui_protocol: https
+  portal_gui_url: "https://portal.kong.braincraft.io/"
+  portal_api_uri: "https://portal.kong.braincraft.io/api"
+  portal_gui_host: "portal.kong.braincraft.io"
+  portal_gui_access_log: /dev/stdout
+  portal_api_access_log: /dev/stdout
+  portal_gui_error_log: /dev/stdout
+  portal_api_error_log: /dev/stdout
+  portal_auth: basic-auth
+  portal_session_conf:
+    valueFrom:
+      secretKeyRef:
+        name: kong-session-config
+        key: portal_session_conf
+
+secretVolumes: 
+  - kong-cluster-cert
+  - kong-tls
+
+proxy:
+  enabled: false
+
+cluster:
+  enabled: true
+  tls:
+    enabled: true
+    servicePort: 8005
+    containerPort: 8005
+
+clustertelemetry:
+  enabled: true
+  type: ClusterIP
+  tls:
+    enabled: true
+    servicePort: 8006
+    containerPort: 8006
+
+enterprise:
+  enabled: true
+  license_secret: kong-enterprise-license
+  vitals:
+    enabled: true
+  portal:
+    enabled: true
+  rbac:
+    # TODO: enable rbac
+    enabled: true
+    admin_gui_auth: basic-auth
+    session_conf_secret: kong-session-config
+    admin_gui_auth_conf_secret: kong-session-config
+  smtp:
+    enabled: false
+
+status:
+  enabled: true
+  http:
+    enabled: true
+    containerPort: 8100
+  tls:
+    enabled: false
+    containerPort: 8543
+
+ingressController:
+  enabled: true
+  installCRDs: false
+  args: ["--v=5"]
+  env:
+    publish_service: kong/dataplane-kong-proxy
+    kong_admin_tls_skip_verify: true
+    kong_admin_token:
+      valueFrom:
+        secretKeyRef:
+          name: kong-enterprise-superuser-password
+          key: password
+
+podAnnotations:
+  kuma.io/gateway: enabled
+
+migrations:
+  preUpgrade: true
+  postUpgrade: true
+  annotations:
+    sidecar.istio.io/inject: false
+    kuma.io/sidecar-injection: "disabled"
+
+admin:
+  enabled: true
+  type: ClusterIP 
+  annotations:
+    konghq.com/protocol: "https"
+  ingress:
+    enabled: true
+    path: /api
+    hostname: manager.kong.braincraft.io
+    tls: kong-tls
+    annotations:
+      konghq.com/protocols: "https"
+      konghq.com/strip-path: "true"
+      kubernetes.io/ingress.class: "kong"
+      konghq.com/https-redirect-status-code: "301"
+  http:
+    enabled: false
+  tls:
+    enabled: true
+    servicePort: 8444
+    containerPort: 8444
+    parameters:
+    - http2
+
+portalapi:
+  enabled: true
+  type: ClusterIP
+  annotations:
+    konghq.com/protocol: "https"
+  ingress:
+    enabled: true
+    path: /api
+    hostname: portal.kong.braincraft.io
+    tls: kong-tls
+    annotations:
+      konghq.com/protocols: "https"
+      konghq.com/strip-path: "true"
+      kubernetes.io/ingress.class: "kong"
+      konghq.com/https-redirect-status-code: "301"
+  http:
+    enabled: false
+  tls:
+    enabled: true
+    servicePort: 8447
+    containerPort: 8447
+    parameters:
+    - http2
+
+manager:
+  enabled: true
+  type: ClusterIP
+  annotations:
+    konghq.com/protocol: "https"
+  ingress:
+    enabled: true
+    path: /
+    hostname: manager.kong.braincraft.io
+    tls: kong-tls
+    annotations:
+      konghq.com/protocols: "https"
+      kubernetes.io/ingress.class: "kong"
+      konghq.com/https-redirect-status-code: "301"
+      konghq.com/strip-path: "false"
+  http:
+    enabled: false
+    servicePort: 8002
+    containerPort: 8002
+  tls:
+    enabled: true
+    servicePort: 8445
+    containerPort: 8445
+    parameters:
+    - http2
+
+portal:
+  enabled: true
+  type: ClusterIP
+  annotations:
+    konghq.com/protocol: "https"
+  ingress:
+    enabled: true
+    path: /
+    hostname: portal.kong.braincraft.io
+    tls: kong-tls
+    annotations:
+      konghq.com/protocols: "https"
+      kubernetes.io/ingress.class: "kong"
+      konghq.com/https-redirect-status-code: "301"
+      konghq.com/strip-path: "false"
+  http:
+    enabled: false
+    servicePort: 8003
+    containerPort: 8003
+  tls:
+    enabled: true
+    servicePort: 8446
+    containerPort: 8446
+    parameters:
+    - http2

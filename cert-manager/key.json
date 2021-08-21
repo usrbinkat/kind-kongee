@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "kingpin-259919",
+  "private_key_id": "bfcb6fa***REDACTED****8f8e4798",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nREDACTED\n-----END PRIVATE KEY-----\n",
+  "client_email": "dns01-solver@kingpin-259919.iam.gserviceaccount.com",
+  "client_id": "1011***REDACTED***2334595",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dns01-solver%40kingpin-259919.iam.gserviceaccount.com"
+}

@@ -1,0 +1,46 @@
+# https://docs.cert-manager.io/en/release-0.8/tasks/issuers/setup-ca.html
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: kongeelabs-clusterissuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: my-selfsigned-ca
+  namespace: kong
+spec:
+  isCA: true
+  commonName: kongeelabs-rootcertificate
+  secretName: kongeelabs-root-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: kongeelabs-selfsigned-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kongeelabs-rootca
+  namespace: kong
+spec:
+  secretName: root-secret
+  issuerRef:
+    name: kongeelabs-clusterissuer
+  dnsNames:
+  - kong.arpa
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: kongeelabs-ca-issuer
+  namespace: kong
+spec:
+  ca:
+    secretName: root-secret

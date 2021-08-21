@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kong-gateway-tls
+  namespace: kong
+spec:
+  secretName: kong-tls
+  issuerRef:
+    name: kongeelabs-selfsigned-issuer
+  privateKey:
+    algorithm: RSA
+    size: 4096
+  commonName: kong.braincraft.com
+  isCA: true
+  duration: 2160h
+  renewBefore: 360h
+  dnsNames:
+  - manager.kong.braincraft.io
+  - portal.kong.braincraft.io
+  - kong.braincraft.io
