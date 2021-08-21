@@ -64,3 +64,4 @@ kubectl get secret -n kong -oyaml kong-tls
 # TODO: https://kic-v2-beta--kongdocs.netlify.app/kubernetes-ingress-controller/2.0.x/guides/getting-started/
 # TODO: https://docs.cert-manager.io/en/release-0.8/tasks/issuers/setup-ca.html
 # TODO: https://discuss.konghq.com/t/ssl-connection-to-kong-in-docker/5256
+# TODO: https://docs.cert-manager.io/en/release-0.11/tasks/issuers/setup-ca.html
