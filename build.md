@@ -4,7 +4,7 @@ This guide is written for MacOS and is easily adaptable to Linux hosts.
 
 ## Architecture
   - Name Resolution via `/etc/hosts`    
-  - Certificates via Cert Manager Self Signed CA    
+  - Certificates via Cert Manager Self Signed CA Issuer   
   - Kong config store via Postgres Database    
     
 #### 0) Create Namespace
