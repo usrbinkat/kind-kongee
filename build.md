@@ -6,7 +6,7 @@ kubectl create namespace cert-manager --dry-run=client -oyaml | kubectl apply -f
 ```
 #### 2) Deploy Cert Manager & Self Signed CA Certificate Issuer
 ```sh
-helm repo add jetstack https://charts.jetstack.io
+helm repo add jetstack https://charts.jetstack.io ; helm repo update
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager --set installCRDs=true \
   --values ./cert-manager/helm-jetstack-certmanager-values.yml
@@ -16,13 +16,19 @@ kubectl apply -n kong -f ./cert-manager/kong-tls-selfsigned-cert.yml
 ```
 #### 3) Deploy Postgres as Kong Configuration Store
 ```sh
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add bitnami https://charts.bitnami.com/bitnami ; helm repo update
 helm install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
 ```
-#### 4) Deploy Kong Gateway Enterprise Edition in Hybrid Mode
+#### 4) Deploy MetalLB for LoadBalancing
+```sh
+kubectl create namespace metallb --dry-run=client -oyaml | kubectl apply -f -
+helm repo add metallb https://metallb.github.io/metallb ; helm repo update
+helm install metallb metallb/metallb -n metallb -f metallb/values.yml
+```
+#### 5) Deploy Kong Gateway Enterprise Edition in Hybrid Mode
 ```sh
 mkdir -p /tmp/kong && docker run -it --rm --pull always --user root -v /tmp/kong:/tmp/kong:z docker.io/kong/kong -- kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
-kubectl create secret tls kong-cluster-cert --namespace kong --cert=tls.crt=/tmp/kong/tls.crt --key=tls.key=/tmp/kong/tls.key --dry-run=client -oyaml | kubectl apply -f -
+kubectl create secret tls kong-cluster-cert --namespace kong --cert=/tmp/kong/tls.crt --key=/tmp/kong/tls.key --dry-run=client -oyaml | kubectl apply -f -
 
 kubectl create secret generic kong-enterprise-license            -n kong --from-file=license=${HOME}/.kong-license-data/license.json --dry-run=client -oyaml | kubectl apply -n kong -f -
 kubectl create secret generic kong-enterprise-superuser-password -n kong --from-literal=password='kong_admin'                        --dry-run=client -oyaml | kubectl apply -n kong -f -
@@ -34,7 +40,7 @@ kubectl create secret generic kong-session-config -n kong \
     --dry-run=client -oyaml \
   | kubectl apply -f -
 
-helm repo add kong https://charts.konghq.com
+helm repo add kong https://charts.konghq.com ; helm repo update
 
 helm install dataplane kong/kong --namespace kong --values ./kongee/dataplane.yml --set ingressController.installCRDs=false
 helm install controlplane kong/kong --namespace kong --values ./kongee/controlplane.yml --set ingressController.installCRDs=false
@@ -45,6 +51,7 @@ helm install controlplane kong/kong --namespace kong --values ./kongee/controlpl
   - https://docs.cert-manager.io/en/release-0.8/tasks/issuers/setup-ca.html    
   - https://discuss.konghq.com/t/ssl-connection-to-kong-in-docker/5256    
   - https://docs.cert-manager.io/en/release-0.11/tasks/issuers/setup-ca.html    
+  - https://faun.pub/wildcard-k8s-4998173b16c8
     
 ### Google Cloud ACME DNS Validation
 ```sh

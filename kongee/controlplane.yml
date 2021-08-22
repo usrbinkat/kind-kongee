@@ -49,9 +49,9 @@ env:
 
   vitals: on
   admin_gui_protocol: https
-  admin_gui_url: "https://manager.kong.braincraft.io/"
-  admin_api_uri: "https://manager.kong.braincraft.io/api"
-  admin_gui_host: "manager.kong.braincraft.io"
+  admin_gui_url: "https://manager.kongeelabs.arpa/"
+  admin_api_uri: "https://manager.kongeelabs.arpa/api"
+  admin_gui_host: "manager.kongeelabs.arpa"
   admin_ssl_cert: /etc/secrets/kong-tls/tls.crt
   admin_ssl_cert_key: /etc/secrets/kong-tls/tls.key
   admin_gui_ssl_cert: /etc/secrets/kong-tls/tls.crt
@@ -64,9 +64,9 @@ env:
   portal: on
   portal_cors_origins: "*"
   portal_gui_protocol: https
-  portal_gui_url: "https://portal.kong.braincraft.io/"
-  portal_api_uri: "https://portal.kong.braincraft.io/api"
-  portal_gui_host: "portal.kong.braincraft.io"
+  portal_gui_url: "https://portal.kongeelabs.arpa/"
+  portal_api_uri: "https://portal.kongeelabs.arpa/api"
+  portal_gui_host: "portal.kongeelabs.arpa"
   portal_gui_access_log: /dev/stdout
   portal_api_access_log: /dev/stdout
   portal_gui_error_log: /dev/stdout
@@ -156,7 +156,7 @@ admin:
   ingress:
     enabled: true
     path: /api
-    hostname: manager.kong.braincraft.io
+    hostname: manager.kongeelabs.arpa
     tls: kong-tls
     annotations:
       konghq.com/protocols: "https"
@@ -180,7 +180,7 @@ portalapi:
   ingress:
     enabled: true
     path: /api
-    hostname: portal.kong.braincraft.io
+    hostname: portal.kongeelabs.arpa
     tls: kong-tls
     annotations:
       konghq.com/protocols: "https"
@@ -204,7 +204,7 @@ manager:
   ingress:
     enabled: true
     path: /
-    hostname: manager.kong.braincraft.io
+    hostname: manager.kongeelabs.arpa
     tls: kong-tls
     annotations:
       konghq.com/protocols: "https"
@@ -230,7 +230,7 @@ portal:
   ingress:
     enabled: true
     path: /
-    hostname: portal.kong.braincraft.io
+    hostname: portal.kongeelabs.arpa
     tls: kong-tls
     annotations:
       konghq.com/protocols: "https"

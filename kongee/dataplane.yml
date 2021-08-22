@@ -34,17 +34,18 @@ secretVolumes:
   - kong-cluster-cert
   - kong-tls
 
+################################
+## Kind localhost hostport
 proxy:
   enabled: true
-  type: LoadBalancer   
-  loadBalancerIP: 192.168.1.31
+  type: ClusterIP
   http:
     enabled: true
-    servicePort: 80
+    hostPort: 80
     containerPort: 8080
   tls:
     enabled: true
-    servicePort: 443
+    hostPort: 443
     containerPort: 8443
   ingress:
     enabled: false
@@ -53,6 +54,28 @@ proxy:
   annotations:
     prometheus.io/port: "9542"
     prometheus.io/scrape: "true"
+
+################################
+## MetalLB LoadBalancer
+#proxy:
+#  enabled: true
+#  type: LoadBalancer   
+#  loadBalancerIP: 192.168.1.13
+#  http:
+#    enabled: true
+#    servicePort: 80
+#    containerPort: 8080
+#  tls:
+#    enabled: true
+#    servicePort: 443
+#    containerPort: 8443
+#  ingress:
+#    enabled: false
+#  labels:
+#    enable-metrics: true
+#  annotations:
+#    prometheus.io/port: "9542"
+#    prometheus.io/scrape: "true"
 
 admin:
   enabled: false

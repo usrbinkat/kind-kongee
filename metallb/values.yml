@@ -1,0 +1,7 @@
+# https://metallb.universe.tf/installation/
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - 198.168.1.13-192.168.1.14
