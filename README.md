@@ -4,8 +4,8 @@ This guide is written for MacOS and is easily adaptable to Linux hosts.
 
 ## Architecture
   - Name Resolution via `/etc/hosts`    
-  - Certificates via Cert Manager Self Signed CA Issuer   
   - Kong config store via Postgres Database    
+  - Certificates via Cert Manager Self Signed CA Issuer   
   - MetalLB deployment for use in other local k8s solutions (optional)
     
 #### 0) Prereqs:
