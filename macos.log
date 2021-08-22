@@ -1,6 +1,0 @@
-brew install kubectl kind git
-brew install --cask lens docker
-docker volume create worker1-containerd
-docker volume create control1-containerd
-kind create cluster --config kind/config.yml
-kubectl label node kongee-worker node-role.kubernetes.io/worker=''
