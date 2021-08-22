@@ -7,11 +7,13 @@ spec:
   secretName: kong-tls
   commonName: kongeelabs.arpa
   dnsNames:
-  - kongeelabs.arpa
-  - portal.kongeelabs.arpa
-  - manager.kongeelabs.arpa
+  - "kongeelabs.arpa"
+  - "portal.kongeelabs.arpa"
+  - "manager.kongeelabs.arpa"
+  - "*.kongeelabs.arpa"
   renewBefore: 360h
   duration: 2160h
+  isCA: false
   issuerRef:
-    name: certman-selfsigned-signer
-    kind: Issuer
+    name: certman-selfsigned-issuer
+    kind: ClusterIssuer
