@@ -1,0 +1,39 @@
+#---
+#apiVersion: v1
+#kind: Namespace
+#metadata:
+#  name: kong
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: certman-cluster-root-issuer
+  namespace: kong
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: certman-cluster-root-ca-cert
+  namespace: kong
+spec:
+  isCA: true
+  commonName: certman-cluster-selfsigned-root-ca
+  secretName: certman-cluster-selfsigned-root-ca
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: certman-cluster-root-issuer
+    group: cert-manager.io
+  renewBefore: 360h
+  duration: 2160h
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: certman-selfsigned-signer
+spec:
+  ca:
+    secretName: certman-cluster-selfsigned-root-ca

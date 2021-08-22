@@ -1,0 +1,93 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  labels:
+    app: kind
+    kubevirt.io/os: linux
+    kubevirt.io/domain: kind
+    kubevirt.io/nodeName: spindle
+  name: kind
+  namespace: kargo
+spec:
+  running: true
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        kubevirt.io/domain: kind
+    spec:
+      domain:
+        clock:
+          timer: {}
+          utc: {}
+        cpu:
+          cores: 1
+          model: host-passthrough
+          sockets: 8
+          threads: 1
+        devices:
+          autoattachGraphicsDevice: true
+          autoattachPodInterface: false
+          autoattachSerialConsole: true
+          disks:
+          - bootOrder: 1
+            disk:
+              bus: virtio
+            name: vda-root-disk
+          - cdrom:
+              bus: sata
+              readonly: true
+            name: cloudinitdisk
+          interfaces:
+          - bridge: {}
+            model: virtio
+            name: eth0
+          networkInterfaceMultiqueue: false
+          rng: {}
+        machine:
+          type: pc-q35-rhel8.3.0
+        resources:
+          requests:
+            memory: 16G
+      networks:
+      - multus:
+          networkName: kargo-net-attach-def-br0
+        name: eth0
+      nodeSelector:
+        node-role.kubernetes.io/kubevirt: ""
+      terminationGracePeriodSeconds: 0
+      volumes:
+      - containerDisk:
+          image: quay.io/containercraft/amzn2linux:latest
+          imagePullPolicy: Always
+        name: vda-root-disk
+      - cloudInitNoCloud:
+          userData: |
+            #cloud-config
+            ssh_pwauth: true
+            chpasswd:
+              expire: False
+              list: |
+                 ec2-user:ec2-user
+            users:
+              - default
+              - name: docker
+                sudo: ['ALL=(ALL) NOPASSWD:ALL']
+                groups: "sudo,docker"
+                shell: /bin/bash
+                ssh-authorized-keys:
+                  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB/zPcAdyHRElufWDNQ1mZUWp4V9jDmaWX35ApsXgxfMHBuz3n8VLGVJuXodAAxeRbbE7Rws8BQcCH4DAMKKLHYZRdJtk3ZUw7rm0i/aq0wkeld7Yp6H/fv1ud3mudp7/+3fQ3gV8RmAO8+FS4jNBMciqtY6mWThKciwnkBWmH5atl6GsZ1ZQ+Y8+W4hXnaF6UEU1+xZ8ja+hu81a9fhejcV+m3RwT511kW5IXDe6wkq9tsIEC529VGI7XuySYvusbchivWYxmE+TBMmId3voGCfkl8hIemUG3/LvQWeK95B/6vBKDCFlmABn60zxrjPkdknWPbu4zg+VJWnslX+rDqSe2cBpHqQ8yDxegPcmXNKv2Qp0h8HhEljWoLc4U5x4hlceDraWBehj8i4N6p+Yt678+jUpOCwGC8z9l+zUrG6NPvbHZ2aIBC3eUteYPtmScNLvOiFASPo/9GQQDNqZclQZf5QGDToAV2rV1B4jJPV8fv/1rlgen6O1PNitKo9FlUfr0WA1IXev6CiJUt4x210BzhTlD84S2A0gHJRbeVVkjWKMx/vo/wqEKTg/vvzSOhFDDlKUxSsguL5rrtOxdGj4sUtjeVRuDjwk1u1DH8P75rI0R/1QaeDixJbRi8Q1315z+MrvJuvzJpMTieldqffNUnexMZcFox8yI8KlVt2U=
+            hostname: kind
+            runcmd:
+              - "yum update"
+              - "yum upgrade -y"
+              - "yum install -y qemu-guest-agent git"
+              - "systemctl enable --now qemu-guest-agent"
+              - "amazon-linux-extras install docker -y"
+              - "service docker start"
+              - "chkconfig docker on"
+              - "curl -o /usr/local/sbin/kind -L 'https://github.com/kubernetes-sigs/kind/releases/latest/download/kind-linux-amd64'"
+              - "chmod +x /usr/local/sbin/kind"
+              - "/usr/local/sbin/kind version"
+              - "usermod -aG docker ec2-user"
+        name: cloudinitdisk
