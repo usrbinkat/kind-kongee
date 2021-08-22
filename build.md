@@ -1,5 +1,5 @@
 # Kong in Kind
-How to build a kong enterprise edition hybrid gateway installation on [Kind](https://kind.sigs.k8s.io).    
+Build a kong enterprise edition hybrid gateway installation on [Kind](https://kind.sigs.k8s.io).    
 This guide is written for MacOS and is easily adaptable to Linux hosts.    
 
 ## Architecture
