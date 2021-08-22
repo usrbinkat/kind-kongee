@@ -8,24 +8,29 @@ This guide is written for MacOS and is easily adaptable to Linux hosts.
   - Certificates via Cert Manager Self Signed CA Issuer   
   - MetalLB deployment for use in other local k8s solutions (optional)
     
-#### 0) Prereqs:
+#### 0) Install Prerequisites:
   - Packages: `git kind httpie curl docker`    
-  - Running Kind Cluster
+    
 ```sh
 brew install kubectl git kind httpie curl-openssl
 brew install --cask lens docker
 docker volume create worker1-containerd
 docker volume create control1-containerd
+```
+    
+#### 1) Start Kind Cluster:
+```sh
+git clone https://github.com/usrbinkat/kind-kongee.git
 kind create cluster --config kind/config.yml
 ```
 
-#### 1) Create Namespace
+#### 2) Create Namespace
 ```sh
 kubectl create namespace kong         --dry-run=client -oyaml | kubectl apply -f -
 kubectl create namespace cert-manager --dry-run=client -oyaml | kubectl apply -f -
 ```
     
-#### 2) Deploy Cert Manager & Self Signed CA Certificate Issuer
+#### 3) Deploy Cert Manager & Self Signed CA Certificate Issuer
 ```sh
 helm repo add jetstack https://charts.jetstack.io ; helm repo update
 helm install cert-manager jetstack/cert-manager \
@@ -35,13 +40,13 @@ kubectl get all -n cert-manager
 kubectl apply -n kong -f ./cert-manager/bootstrap-selfsigned-issuer.yml
 ```
     
-#### 3) Deploy Postgres as Kong Configuration Store
+#### 4) Deploy Postgres as Kong Configuration Store
 ```sh
 helm repo add bitnami https://charts.bitnami.com/bitnami ; helm repo update
 helm install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
 ```
     
-#### 4) Deploy Kong Gateway Enterprise Edition in Hybrid Mode
+#### 5) Deploy Kong Gateway Enterprise Edition in Hybrid Mode
 ```sh
 mkdir -p /tmp/kong && docker run -it --rm --pull always --user root -v /tmp/kong:/tmp/kong:z docker.io/kong/kong -- kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
 kubectl create secret tls kong-cluster-cert --namespace kong --cert=/tmp/kong/tls.crt --key=/tmp/kong/tls.key --dry-run=client -oyaml | kubectl apply -f -
@@ -59,7 +64,7 @@ helm install dataplane kong/kong --namespace kong --values ./kongee/dataplane.ym
 helm install controlplane kong/kong --namespace kong --values ./kongee/controlplane.yml --set ingressController.installCRDs=false
 ```
     
-#### 5) Login to Kong Manager web UI
+#### 6) Login to Kong Manager web UI
   - create following entries in your /etc/hosts file    
 ```sh
 cat <<EOF | sudo tee -a /etc/hosts
@@ -70,7 +75,7 @@ EOF
 ```
   - Open in browser: https://manager.kongeelabs.arpa    
     
-#### 6) Test Endpoint
+#### 7) Test Endpoint
   - NOTE: login to web gui with user:pass `kong_admin`:`kong_admin`
   - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
 ```
