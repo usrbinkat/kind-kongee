@@ -7,7 +7,10 @@
 # https://github.com/keycloak/keycloak-quickstarts/tree/latest/kubernetes-examples
 # https://github.com/keycloak/keycloak-quickstarts/tree/latest/operator-examples
 # https://www.keycloak.org/getting-started/getting-started-operator-kubernetes
+# https://dev.to/stack-labs/scaling-keycloak-on-distroless-into-kubernetes-fj3
 # https://blog.codecentric.de/en/2019/05/configuring-kubernetes-login-keycloak/
+# https://medium.com/@sagarpatkeatl/kubernetes-with-keycloak-eca47f86abec
+# https://www.coveros.com/keycloak-operator-running-locally-with-kind/
 # http://www.mastertheboss.com/keycloak/keycloak-with-docker/
 ---
 apiVersion: operators.coreos.com/v1
