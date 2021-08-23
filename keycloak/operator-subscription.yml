@@ -1,0 +1,31 @@
+# Install OLM
+# export VERSION_OLM=$(curl -s https://api.github.com/repos/operator-framework/operator-lifecycle-manager/releases/latest | awk -F '["v,]' '/tag_name/{print $5}')
+# curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v$VERSION_OLM/install.sh | bash -s v$VERSION_OLM
+# kubectl get csv -n keycloak
+#
+# References:
+# https://github.com/keycloak/keycloak-quickstarts/tree/latest/kubernetes-examples
+# https://github.com/keycloak/keycloak-quickstarts/tree/latest/operator-examples
+# https://www.keycloak.org/getting-started/getting-started-operator-kubernetes
+# https://blog.codecentric.de/en/2019/05/configuring-kubernetes-login-keycloak/
+# http://www.mastertheboss.com/keycloak/keycloak-with-docker/
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: operatorgroup
+  namespace: keycloak
+spec:
+  targetNamespaces:
+  - keycloak
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  channel: alpha
+  name: keycloak-operator
+  source: operatorhubio-catalog
+  sourceNamespace: olm

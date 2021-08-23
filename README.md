@@ -21,7 +21,7 @@ docker volume create control1-containerd
 #### 1) Start Kind Cluster:
 ```sh
 git clone https://github.com/usrbinkat/kind-kongee.git
-kind create cluster --config kind/config.yml
+kind create cluster --config platform/kind/config.yml
 ```
 
 #### 2) Create Namespace
