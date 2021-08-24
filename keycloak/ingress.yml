@@ -1,0 +1,46 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak-kong-ingress
+  namespace: keycloak
+  labels:
+    app: keycloak
+    app.kubernetes.io/name: keycloak
+    kubernetes.io/ingress.class: kong
+    ingress.kubernetes.io/service-upstream: "true"
+    konghq.com/preserve-host: "true"
+    konghq.com/strip-path: "false"
+    konghq.com/protocols: https
+    konghq.com/protocol: tls
+spec:
+  tls:
+    - hosts:
+        - keycloak.kongeelabs.arpa
+      secretName: keycloak-tls
+  rules:
+  - host: keycloak.kongeelabs.arpa
+    http:
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: keycloak
+            port:
+              name: keycloak
+             #number: 8443
+      - path: /auth
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 8443
+
+# annotations:
+#   nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+#   nginx.ingress.kubernetes.io/server-snippet: |2-
+#                           location ~* "^/auth/realms/master/metrics" {
+#                               return 301 /auth/realms/master;
+#                             }
