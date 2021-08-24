@@ -1,6 +1,6 @@
 # helm install dataplane kong/kong --namespace kong --values ./dataplane.yml --set ingressController.installCRDs=false
 namespace: kong
-replicaCount: 1
+replicaCount: 2
 image:
   repository: kong/kong-gateway
   tag: "2.5"
@@ -57,25 +57,25 @@ proxy:
 
 ################################
 ## MetalLB LoadBalancer
-#proxy:
-#  enabled: true
-#  type: LoadBalancer   
-#  loadBalancerIP: 192.168.1.13
-#  http:
-#    enabled: true
-#    servicePort: 80
-#    containerPort: 8080
-#  tls:
-#    enabled: true
-#    servicePort: 443
-#    containerPort: 8443
-#  ingress:
-#    enabled: false
-#  labels:
-#    enable-metrics: true
-#  annotations:
-#    prometheus.io/port: "9542"
-#    prometheus.io/scrape: "true"
+proxy:
+  enabled: true
+  type: LoadBalancer   
+  loadBalancerIP: 192.168.1.66
+  http:
+    enabled: false
+    servicePort: 80
+    containerPort: 8080
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8443
+  ingress:
+    enabled: false
+  labels:
+    enable-metrics: true
+  annotations:
+    prometheus.io/port: "9542"
+    prometheus.io/scrape: "true"
 
 admin:
   enabled: false
@@ -93,3 +93,15 @@ migrations:
 ingressController:
   enabled: false
   installCRDs: false
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/instance
+            operator: In
+            values:
+            - dataplane
+        topologyKey: kubernetes.io/hostname
+      weight: 100

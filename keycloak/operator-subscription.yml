@@ -1,6 +1,17 @@
+# git clone https://github.com/keycloak/keycloak-operator.git
+# cd keycloak-operator
+# kubectl apply -f deploy/crds/
+# kubectl apply -f deploy/role.yaml -n keycloak
+# kubectl apply -f deploy/role_binding.yaml -n keycloak
+# kubectl apply -f deploy/service_account.yaml -n keycloak
+# kubectl apply -f deploy/operator.yaml -n keycloak
+# kubectl get deployment keycloak-operator
+# kubectl get deployments -A
 # Install OLM
 # export VERSION_OLM=$(curl -s https://api.github.com/repos/operator-framework/operator-lifecycle-manager/releases/latest | awk -F '["v,]' '/tag_name/{print $5}')
 # curl -sL https://github.com/operator-framework/operator-lifecycle-manager/releases/download/v$VERSION_OLM/install.sh | bash -s v$VERSION_OLM
+# kubectl create namespace keycloak --dry-run=client -oyaml | kubectl apply -f -
+# kubectl apply -n keycloak -f ./keycloak/operator-subscription.yml
 # kubectl get csv -n keycloak
 #
 # References:
@@ -17,7 +28,7 @@ apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
   name: operatorgroup
-  namespace: keycloak
+  namespace: olm
 spec:
   targetNamespaces:
   - keycloak
@@ -26,7 +37,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
   name: keycloak
-  namespace: keycloak
+  namespace: olm
 spec:
   channel: alpha
   name: keycloak-operator

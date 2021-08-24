@@ -1,0 +1,12 @@
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: default
+  namespace: keycloak
+  labels:
+    app: default
+spec:
+  instances: 1
+# externalAccess:
+#   enabled: True

@@ -1,0 +1,15 @@
+apiVersion: keycloak.org/v1alpha1
+kind: KeycloakClient
+metadata:
+  name: kong-client
+  namespace: keycloak
+  labels:
+    app: default
+spec:
+  realmSelector:
+    matchLabels:
+      app: default
+  client:
+    id: "default"
+    clientId: default-client-secret
+    secret: default-client-secret

@@ -37,7 +37,7 @@ helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager --set installCRDs=true \
   --values ./cert-manager/helm-jetstack-certmanager-values.yml
 kubectl get all -n cert-manager
-kubectl apply -n kong -f ./cert-manager/bootstrap-selfsigned-issuer.yml
+kubectl apply -f ./cert-manager/bootstrap-selfsigned-issuer.yml
 ```
     
 #### 4) Deploy Postgres as Kong Configuration Store
@@ -50,7 +50,7 @@ helm install postgres bitnami/postgresql --namespace kong --values ./postgres/va
 ```sh
 mkdir -p /tmp/kong && docker run -it --rm --pull always --user root -v /tmp/kong:/tmp/kong:z docker.io/kong/kong -- kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
 kubectl create secret tls kong-cluster-cert --namespace kong --cert=/tmp/kong/tls.crt --key=/tmp/kong/tls.key --dry-run=client -oyaml | kubectl apply -f -
-kubectl apply -n kong -f ./cert-manager/kong-tls-selfsigned-cert.yml
+kubectl apply -n kong -f ./kongee/kong-tls-selfsigned-cert.yml
 kubectl create secret generic kong-enterprise-license            -n kong --from-file=license=${HOME}/.kong-license-data/license.json --dry-run=client -oyaml | kubectl apply -n kong -f -
 kubectl create secret generic kong-enterprise-superuser-password -n kong --from-literal=password='kong_admin'                        --dry-run=client -oyaml | kubectl apply -n kong -f -
 kubectl create secret generic kong-postgres-password             -n kong --from-literal=password=kong                                --dry-run=client -oyaml | kubectl apply -n kong -f -
