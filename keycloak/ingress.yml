@@ -28,14 +28,6 @@ spec:
           service:
             name: keycloak
             port:
-              name: keycloak
-             #number: 8443
-      - path: /auth
-        pathType: ImplementationSpecific
-        backend:
-          service:
-            name: keycloak
-            port:
               number: 8443
 
 # annotations:
