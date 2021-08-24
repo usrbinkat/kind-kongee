@@ -5,14 +5,17 @@ metadata:
   name: keycloak-kong-ingress
   namespace: keycloak
   labels:
-    app: keycloak
     app.kubernetes.io/name: keycloak
-    kubernetes.io/ingress.class: kong
-    ingress.kubernetes.io/service-upstream: "true"
-    konghq.com/preserve-host: "true"
+  annotations:
+    # Upstream / Backend protocol
+    konghq.com/protocol: "https"
+    # User Facing Redirect from http to https
+    konghq.com/protocols: "https"
     konghq.com/strip-path: "false"
-    konghq.com/protocols: https
-    konghq.com/protocol: tls
+    konghq.com/preserve-host: "true"
+    kubernetes.io/ingress.class: "kong"
+    ingress.kubernetes.io/service-upstream: "true"
+   #konghq.com/https-redirect-status-code: "301"
 spec:
   tls:
     - hosts:
@@ -28,11 +31,4 @@ spec:
           service:
             name: keycloak
             port:
-              number: 8443
-
-# annotations:
-#   nginx.ingress.kubernetes.io/backend-protocol: HTTPS
-#   nginx.ingress.kubernetes.io/server-snippet: |2-
-#                           location ~* "^/auth/realms/master/metrics" {
-#                               return 301 /auth/realms/master;
-#                             }
+              name: keycloak
