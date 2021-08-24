@@ -8,5 +8,12 @@ metadata:
     app: default
 spec:
   instances: 1
-# externalAccess:
-#   enabled: True
+  externalAccess:
+    enabled: True
+    host: keycloak.kongeelabs.arpa
+    tlsTermination: "reencrypt"
+  keycloakDeploymentSpec:
+    experimental:
+      env:
+        - name: PROXY_ADDRESS_FORWARDING
+          value: 'true'
