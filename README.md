@@ -20,7 +20,7 @@ docker volume create control1-containerd
     
 #### 1) Start Kind Cluster:
 ```sh
-git clone https://github.com/usrbinkat/kind-kongee.git
+git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kind-kongee
 kind create cluster --config platform/kind/config.yml
 ```
 
@@ -36,8 +36,8 @@ helm repo add jetstack https://charts.jetstack.io ; helm repo update
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager --set installCRDs=true \
   --values ./cert-manager/helm-jetstack-certmanager-values.yml
-kubectl get all -n cert-manager
 kubectl apply -f ./cert-manager/bootstrap-selfsigned-issuer.yml
+kubectl get all -n cert-manager
 ```
     
 #### 4) Deploy Postgres as Kong Configuration Store
