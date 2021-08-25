@@ -48,6 +48,11 @@ kubectl create namespace kong --dry-run=client -oyaml | kubectl apply -f -
 ```
 
 #### 4) Deploy Postgres as Kong Configuration Store
+  - Create Postgres Password Secret
+```sh
+kubectl create secret generic kong-postgres-password -n kong --from-literal=password=kong --dry-run=client -oyaml | kubectl apply -n kong -f -
+```
+  - Deploy Postgres
 ```sh
 helm repo add bitnami https://charts.bitnami.com/bitnami ; helm repo update
 helm install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
