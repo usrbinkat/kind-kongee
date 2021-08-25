@@ -1,0 +1,77 @@
+replicaCount: 1
+image:
+  repository: ghcr.io/dexidp/dex
+  pullPolicy: IfNotPresent
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+https:
+  enabled: true
+grpc:
+  enabled: true
+
+config: {}
+configSecret:
+  create: true
+  # Must point to secret that contains at least a `config.yaml` key.
+  name: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+rbac:
+  create: true
+
+podAnnotations: {}
+podDisruptionBudget:
+  enabled: false
+  minAvailable:
+  maxUnavailable:
+
+podSecurityContext: {}
+securityContext: {}
+service:
+  type: ClusterIP
+  annotations:
+    konghq.com/protocol: https
+  ports:
+    http:
+      port: 5556
+      #nodePort:
+    https:
+      port: 5554
+      #nodePort:
+    grpc:
+      port: 5557
+      #nodePort:
+
+ingress:
+  enabled: true
+  #className: "kong"
+  annotations:
+    kubernetes.io/ingress.class: kong
+  hosts:
+    - host: dex.kongeelabs.arpa
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: dex-tls
+      hosts:
+        - dex.kongeelabs.arpa
+
+resources: {}
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+nodeSelector: {}
+tolerations: []
+affinity: {}
+

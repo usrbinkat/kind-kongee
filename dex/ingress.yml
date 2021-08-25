@@ -7,30 +7,30 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: keycloak-kong-ingress
-  namespace: keycloak
+  name: dex-kong-ingress
+  namespace: dex2
   labels:
-    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/name: dex
   annotations:
     # User Facing Redirect from http to https
     konghq.com/protocols: "https"
     konghq.com/strip-path: "false"
-    konghq.com/preserve-host: "true"
+   #konghq.com/preserve-host: "true"
     kubernetes.io/ingress.class: "kong"
-    ingress.kubernetes.io/service-upstream: "true"
+   #ingress.kubernetes.io/service-upstream: "true"
 spec:
   tls:
     - hosts:
-        - keycloak.kongeelabs.arpa
-      secretName: keycloak-tls
+        - dex.kongeelabs.arpa
+      secretName: dex-tls
   rules:
-  - host: keycloak.kongeelabs.arpa
+  - host: dex.kongeelabs.arpa
     http:
       paths:
       - path: /
         pathType: ImplementationSpecific
         backend:
           service:
-            name: keycloak
+            name: dex
             port:
-              name: keycloak
+              name: dex

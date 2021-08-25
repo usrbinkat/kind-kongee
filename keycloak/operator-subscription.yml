@@ -1,3 +1,4 @@
+# https://www.keycloak.org/docs/latest/server_installation/index.html#_install_by_command
 # git clone https://github.com/keycloak/keycloak-operator.git
 # cd keycloak-operator
 # kubectl apply -f deploy/crds/

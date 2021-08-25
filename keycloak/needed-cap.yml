@@ -1,0 +1,42 @@
+NAME       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+keycloak   ClusterIP   10.233.48.71   <none>        8443/TCP   3h26m
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    description: The web server's https port.
+    konghq.com/protocol: https
+    service.alpha.openshift.io/serving-cert-secret-name: sso-x509-https-secret
+  creationTimestamp: "2021-08-24T20:20:14Z"
+  labels:
+    app: keycloak
+  name: keycloak
+  namespace: keycloak
+  ownerReferences:
+  - apiVersion: keycloak.org/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Keycloak
+    name: default
+    uid: c2e57b80-a7df-4a02-bb0c-8ad684f7764f
+  resourceVersion: "548147"
+  uid: beb0c852-95e2-410f-8fa8-9067d20ea1bd
+spec:
+  clusterIP: 10.233.48.71
+  clusterIPs:
+  - 10.233.48.71
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: keycloak
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: keycloak
+    component: keycloak
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
