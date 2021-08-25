@@ -115,7 +115,7 @@ EOF
   - NOTE: login to web gui with user:pass `kong_admin`:`kong_admin`
   - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
 ```
-http https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
+http --verify=no https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
 ```
     
 ### References:
