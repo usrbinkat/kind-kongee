@@ -9,6 +9,10 @@ This guide is written for MacOS and is easily adaptable to Linux hosts.
   - MetalLB deployment for use in other local k8s solutions (optional)
     
 #### 0) Install Prerequisites:
+  - Install Homebrew (MacOS only)
+```sh
+curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+```
   - Packages: `git kind httpie curl docker`    
     
 ```sh
