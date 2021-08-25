@@ -1,6 +1,6 @@
 # helm install dataplane kong/kong --namespace kong --values ./dataplane.yml --set ingressController.installCRDs=false
 namespace: kong
-replicaCount: 2
+replicaCount: 1
 image:
   repository: kong/kong-gateway
   tag: "2.5"

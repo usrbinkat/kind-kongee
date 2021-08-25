@@ -36,6 +36,8 @@ helm repo add jetstack https://charts.jetstack.io ; helm repo update
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager --set installCRDs=true \
   --values ./cert-manager/helm-jetstack-certmanager-values.yml
+```
+```sh
 kubectl apply -f ./cert-manager/bootstrap-selfsigned-issuer.yml
 kubectl get all -n cert-manager
 ```
@@ -47,19 +49,42 @@ helm install postgres bitnami/postgresql --namespace kong --values ./postgres/va
 ```
     
 #### 5) Deploy Kong Gateway Enterprise Edition in Hybrid Mode
+  - Create hybrid dual plane mutual trust certificate
 ```sh
-mkdir -p /tmp/kong && docker run -it --rm --pull always --user root -v /tmp/kong:/tmp/kong:z docker.io/kong/kong -- kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
+mkdir -p /tmp/kong
+docker run -it --rm --pull always --user root --volume /tmp/kong:/tmp/kong:z \
+    docker.io/kong/kong -- \
+  kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
 sudo chown $USER:$USER -R /tmp/kong
-kubectl create secret tls kong-cluster-cert --namespace kong --cert=/tmp/kong/tls.crt --key=/tmp/kong/tls.key --dry-run=client -oyaml | kubectl apply -f -
+```
+  - Create hubrid certificates secret
+```sh
+kubectl create secret tls kong-cluster-cert --namespace kong \
+    --cert=/tmp/kong/tls.crt --key=/tmp/kong/tls.key --dry-run=client -oyaml \
+  | kubectl apply -f -
+```
+  - Issue self signed kong admin api, manager, portal api, and portal certificates
+```sh
 kubectl apply -n kong -f ./kongee/kong-tls-selfsigned-cert.yml
-kubectl create secret generic kong-enterprise-license            -n kong --from-file=license=${HOME}/.kong-license-data/license.json --dry-run=client -oyaml | kubectl apply -n kong -f -
-kubectl create secret generic kong-enterprise-superuser-password -n kong --from-literal=password='kong_admin'                        --dry-run=client -oyaml | kubectl apply -n kong -f -
-kubectl create secret generic kong-postgres-password             -n kong --from-literal=password=kong                                --dry-run=client -oyaml | kubectl apply -n kong -f -
+```
+  - create kong gateway enterprise license secret
+```sh
+kubectl create secret generic kong-enterprise-license -n kong --from-file=license=${HOME}/.kong-license-data/license.json --dry-run=client -oyaml | kubectl apply -n kong -f -
+```
+  - Create `kong_admin` super user password secret
+```sh
+kubectl create secret generic kong-enterprise-superuser-password -n kong --from-literal=password='kong_admin' --dry-run=client -oyaml | kubectl apply -n kong -f -
+```
+  - Create Manager & Portal WebUI Session Config Secret
+```sh
 kubectl create secret generic kong-session-config -n kong \
     --from-file=admin_gui_session_conf=./kongee/contrib/admin_gui_session_conf \
     --from-file=portal_session_conf=./kongee/contrib/portal_session_conf \
     --dry-run=client -oyaml \
   | kubectl apply -f -
+```
+  - Install Kong Data Plane & Control Plane
+```sh
 helm repo add kong https://charts.konghq.com ; helm repo update
 helm install dataplane kong/kong --namespace kong --values ./kongee/dataplane.yml --set ingressController.installCRDs=false
 helm install controlplane kong/kong --namespace kong --values ./kongee/controlplane.yml --set ingressController.installCRDs=false
