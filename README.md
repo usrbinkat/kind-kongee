@@ -65,10 +65,10 @@ mkdir -p /tmp/kong
 docker run -it --rm --pull always --user root --volume /tmp/kong:/tmp/kong:z \
     docker.io/kong/kong -- \
   kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
-sudo chown $USER -R /tmp/{kong,kong/*}
 ```
   - Create hubrid certificates secret
 ```sh
+sudo chown $USER -R /tmp/{kong,kong/*}
 kubectl create secret tls kong-cluster-cert --namespace kong \
     --cert=/tmp/kong/tls.crt --key=/tmp/kong/tls.key --dry-run=client -oyaml \
   | kubectl apply -f -
