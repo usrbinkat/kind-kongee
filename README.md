@@ -21,6 +21,7 @@ brew install --cask lens docker
 docker volume create worker1-containerd
 docker volume create control1-containerd
 ```
+  - NOTE: be sure to open Docker Desktop before continuing if you havent done so on this mac before
     
 #### 1) Start Kind Cluster:
 ```sh
