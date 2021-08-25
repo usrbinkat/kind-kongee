@@ -44,7 +44,7 @@ kubectl get all -n cert-manager
 
 #### 3) Create Kong Namespaces
 ```sh
-kubectl create namespace kong         --dry-run=client -oyaml | kubectl apply -f -
+kubectl create namespace kong --dry-run=client -oyaml | kubectl apply -f -
 ```
 
 #### 4) Deploy Postgres as Kong Configuration Store
@@ -60,7 +60,7 @@ mkdir -p /tmp/kong
 docker run -it --rm --pull always --user root --volume /tmp/kong:/tmp/kong:z \
     docker.io/kong/kong -- \
   kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
-sudo chown $USER:$USER -R /tmp/kong
+sudo chown $USER -R /tmp/{kong,kong/*}
 ```
   - Create hubrid certificates secret
 ```sh
