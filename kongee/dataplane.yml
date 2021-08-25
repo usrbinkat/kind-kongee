@@ -57,25 +57,25 @@ proxy:
 
 ################################
 ## MetalLB LoadBalancer
-proxy:
-  enabled: true
-  type: LoadBalancer   
-  loadBalancerIP: 192.168.1.66
-  http:
-    enabled: false
-    servicePort: 80
-    containerPort: 8080
-  tls:
-    enabled: true
-    servicePort: 443
-    containerPort: 8443
-  ingress:
-    enabled: false
-  labels:
-    enable-metrics: true
-  annotations:
-    prometheus.io/port: "9542"
-    prometheus.io/scrape: "true"
+#proxy:
+#  enabled: true
+#  type: LoadBalancer   
+#  loadBalancerIP: 192.168.1.66
+#  http:
+#    enabled: false
+#    servicePort: 80
+#    containerPort: 8080
+#  tls:
+#    enabled: true
+#    servicePort: 443
+#    containerPort: 8443
+#  ingress:
+#    enabled: false
+#  labels:
+#    enable-metrics: true
+#  annotations:
+#    prometheus.io/port: "9542"
+#    prometheus.io/scrape: "true"
 
 admin:
   enabled: false

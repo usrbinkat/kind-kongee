@@ -44,3 +44,4 @@ nodes:
         kubeletExtraArgs:
           node-labels: "ingress=true"
          #node-labels: "node-role.kubernetes.io/worker=''"
+         #node-labels: ["ingress=true","node-role.kubernetes.io/worker=''"]
