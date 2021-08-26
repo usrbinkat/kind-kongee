@@ -28,16 +28,11 @@ docker volume create control1-containerd
 git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kind-kongee
 kind create cluster --config platform/kind/config.yml
 ```
-
-#### 2) Create Namespace
-```sh
-kubectl create namespace kong         --dry-run=client -oyaml | kubectl apply -f -
-kubectl create namespace cert-manager --dry-run=client -oyaml | kubectl apply -f -
-```
     
-#### 3) Deploy Cert Manager & Self Signed CA Certificate Issuer
+#### 2) Deploy Cert Manager & Self Signed CA Certificate Issuer
 ```sh
 helm repo add jetstack https://charts.jetstack.io ; helm repo update
+kubectl create namespace cert-manager --dry-run=client -oyaml | kubectl apply -f -
 helm install cert-manager jetstack/cert-manager \
   --namespace cert-manager --set installCRDs=true \
   --values ./cert-manager/helm-jetstack-certmanager-values.yml
@@ -46,8 +41,18 @@ helm install cert-manager jetstack/cert-manager \
 kubectl apply -f ./cert-manager/bootstrap-selfsigned-issuer.yml
 kubectl get all -n cert-manager
 ```
-    
+
+#### 3) Create Kong Namespaces
+```sh
+kubectl create namespace kong --dry-run=client -oyaml | kubectl apply -f -
+```
+
 #### 4) Deploy Postgres as Kong Configuration Store
+  - Create Postgres Password Secret
+```sh
+kubectl create secret generic kong-postgres-password -n kong --from-literal=password=kong --dry-run=client -oyaml | kubectl apply -n kong -f -
+```
+  - Deploy Postgres
 ```sh
 helm repo add bitnami https://charts.bitnami.com/bitnami ; helm repo update
 helm install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
@@ -60,10 +65,10 @@ mkdir -p /tmp/kong
 docker run -it --rm --pull always --user root --volume /tmp/kong:/tmp/kong:z \
     docker.io/kong/kong -- \
   kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
-sudo chown $USER:$USER -R /tmp/kong
 ```
   - Create hubrid certificates secret
 ```sh
+sudo chown $USER -R /tmp/{kong,kong/*}
 kubectl create secret tls kong-cluster-cert --namespace kong \
     --cert=/tmp/kong/tls.crt --key=/tmp/kong/tls.key --dry-run=client -oyaml \
   | kubectl apply -f -
@@ -110,7 +115,7 @@ EOF
   - NOTE: login to web gui with user:pass `kong_admin`:`kong_admin`
   - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
 ```
-http https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
+http --verify=no https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
 ```
     
 ### References:
