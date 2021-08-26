@@ -117,27 +117,9 @@ helm install controlplane kong/kong --namespace kong --values ./kongee/controlpl
 ```
     
 #### 5) Install Keycloak
-  - Create Namespace
+  - Deploy Operator, Certs, Realm, & Client
 ```sh
-kubectl create namespace keycloak --dry-run=client -oyaml | kubectl apply -f -
-```
-  - Install Keycloak Operator
-```sh
-kubectl apply -n keycloak -f /tmp/keycloak/deploy/crds
-kubectl apply -n keycloak -f /tmp/keycloak/deploy/role.yaml
-kubectl apply -n keycloak -f /tmp/keycloak/deploy/role_binding.yaml
-kubectl apply -n keycloak -f /tmp/keycloak/deploy/service_account.yaml
-kubectl apply -n keycloak -f /tmp/keycloak/deploy/operator.yaml
-```
-  - Issue Keycloak Console Certificate
-```sh
-kubectl apply -n keycloak -f ./keycloak/selfsigned-keycloak-tls.yml
-```
-  - Create keycloak, realm, and client
-```sh
-kubectl apply -n keycloak -f ./keycloak/keycloak.yml 
-kubectl apply -n keycloak -f ./keycloak/realm.yml 
-kubectl apply -n keycloak -f ./keycloak/client.yml
+kubectl kustomize keycloak | kubectl apply -f - ; sleep 6 ; kubectl kustomize keycloak | kubectl apply -f - ; sleep 6 ; kubectl kustomize keycloak | kubectl apply -f -
 ```
   - Create ingress for Keycloak web console
 ```sh 
