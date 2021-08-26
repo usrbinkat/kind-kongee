@@ -14,7 +14,6 @@ This guide is written for MacOS and is easily adaptable to Linux hosts.
 curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 ```
   - Install Packages: `git kind httpie curl docker`    
-    
 ```sh
 brew install kubectl git kind httpie curl-openssl helm
 brew install --cask lens docker
@@ -30,8 +29,8 @@ helm repo update
 ```
   - Download Github Repositories  
 ```sh
-git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kind-kongee
 git clone https://github.com/keycloak/keycloak-operator.git /tmp/keycloak
+git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kind-kongee
 ```
   - create following entries in your /etc/hosts file    
 ```sh
@@ -42,7 +41,6 @@ cat <<EOF | sudo tee -a /etc/hosts
 127.0.0.1  keycloak.kongeelabs.arpa
 EOF
 ```
-    
   - NOTE: be sure to open Docker Desktop before continuing if you havent done so on this mac before
 
 #### 1) Start Kind Cluster:
@@ -148,12 +146,13 @@ kubectl apply -n keycloak -f ./keycloak/ingress.yml
 ```
 
 #### Final) Test Services
+  - Open Kong Manager in browser: https://manager.kongeelabs.arpa    
   - NOTE: login to web gui with user:pass `kong_admin`:`kong_admin`
-  - Open in browser: https://manager.kongeelabs.arpa    
+  - Test Kong Admin API
+  - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
 ```
 http --verify=no https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
 ```
-  - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
   - Login to keycloak with username `admin` @ https://keycloak.kongeelabs.arpa
   - Lookup Keycloak admin password
 ```sh
