@@ -107,6 +107,7 @@ cat <<EOF | sudo tee -a /etc/hosts
 127.0.0.1  kongeelabs.arpa
 127.0.0.1  portal.kongeelabs.arpa
 127.0.0.1  manager.kongeelabs.arpa
+127.0.0.1  keycloak.kongeelabs.arpa
 EOF
 ```
   - Open in browser: https://manager.kongeelabs.arpa    
@@ -117,7 +118,45 @@ EOF
 ```
 http --verify=no https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
 ```
+
+#### 8) Install Keycloak
+  - Create Namespace
+```sh
+kubectl create namespace keycloak --dry-run=client -oyaml | kubectl apply -f -
+```
+  - Install Keycloak Operator
+```sh
+git clone https://github.com/keycloak/keycloak-operator.git /tmp/keycloak
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/crds
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/role.yaml
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/role_binding.yaml
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/service_account.yaml
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/operator.yaml
+```
+  - Issue Keycloak Console Certificate
+```sh
+kubectl apply -n keycloak -f ./keycloak/selfsigned-keycloak-tls.yml
+```
+  - Create keycloak, realm, and client
+```sh
+kubectl apply -n keycloak -f ./keycloak/keycloak.yml 
+kubectl apply -n keycloak -f ./keycloak/realm.yml 
+kubectl apply -n keycloak -f ./keycloak/client.yml
+```
+  - Create ingress for Keycloak we console
+```sh 
+kubectl annotate service -n keycloak keycloak konghq.com/protocol="https"
+kubectl apply -n keycloak -f ./keycloak/ingress.yml 
+```
+  - Lookup admin password
+```sh
+kubectl get secrets -n keycloak credential-default -ojsonpath="{.data.ADMIN_PASSWORD}" | base64 -d
+```
+  - Login to keycloak with username `admin` @ https://keycloak.kongeelabs.arpa
     
+      
+-------------------------
+-------------------------
 ### References:
   - https://kic-v2-beta--kongdocs.netlify.app/kubernetes-ingress-controller/2.0.x/guides/getting-started/    
   - https://docs.cert-manager.io/en/release-0.8/tasks/issuers/setup-ca.html    
