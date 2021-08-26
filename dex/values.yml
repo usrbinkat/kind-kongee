@@ -1,77 +1,28 @@
 replicaCount: 1
-image:
-  repository: ghcr.io/dexidp/dex
-  pullPolicy: IfNotPresent
-  tag: ""
 
-nameOverride: ""
-fullnameOverride: ""
-
-https:
-  enabled: true
-grpc:
-  enabled: true
-
-config: {}
-configSecret:
-  create: true
-  # Must point to secret that contains at least a `config.yaml` key.
-  name: ""
-
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
-
-rbac:
-  create: true
-
-podAnnotations: {}
-podDisruptionBudget:
-  enabled: false
-  minAvailable:
-  maxUnavailable:
-
-podSecurityContext: {}
-securityContext: {}
-service:
-  type: ClusterIP
-  annotations:
-    konghq.com/protocol: https
-  ports:
-    http:
-      port: 5556
-      #nodePort:
-    https:
-      port: 5554
-      #nodePort:
-    grpc:
-      port: 5557
-      #nodePort:
+config:
+  issuer: "https://dex.kongeelabs.arpa"
+  enablePasswordDB: true
+  storage:
+    type: memory
 
 ingress:
   enabled: true
-  #className: "kong"
   annotations:
-    kubernetes.io/ingress.class: kong
+    konghq.com/protocols: "https"
+    konghq.com/strip-path: "false"
+    konghq.com/preserve-host: "true"
+    kubernetes.io/ingress.class: "kong"
+    ingress.kubernetes.io/service-upstream: "true"
+  tls:
+    - hosts:
+        - dex.kongeelabs.arpa
+      secretName: dex-tls
   hosts:
     - host: dex.kongeelabs.arpa
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls:
-    - secretName: dex-tls
-      hosts:
-        - dex.kongeelabs.arpa
-
-resources: {}
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  targetMemoryUtilizationPercentage: 80
-nodeSelector: {}
-tolerations: []
-affinity: {}
-
+envFrom:
+- secretRef:
+    name: "dex-env"

@@ -4,7 +4,7 @@ metadata:
   name: dex.example.com.tls
   namespace: dex
 spec:
-  secretName: dex.example.com.tls
+  secretName: dex-tls
   commonName: dex.kongeelabs.arpa
   dnsNames:
   - "dex.kongeelabs.arpa"

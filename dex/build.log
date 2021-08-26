@@ -1,3 +1,4 @@
 kubectl apply -f dex/selfsigned-dex-tls.yml
 kubectl create secret generic github-client -n dex --from-literal=client-id='usrbinkat' --from-literal=client-secret='db**TOKEN**REDACTED**88bf' -oyaml --dry-run=client | kubectl apply -f -
 kubectl kustomize https://github.com/usrbinkat/dex-deploy | kubectl apply -n dex -f -
+helm repo add dex https://charts.dexidp.io; helm repo update
