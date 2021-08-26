@@ -1,4 +1,4 @@
-kubectl create namespace keycloak | kubectl apply -f -
+kubectl create namespace keycloak --dry-run=client -oyaml | kubectl apply -f -
 
 git clone https://github.com/keycloak/keycloak-operator.git /tmp/keycloak
 kubectl apply -n keycloak -f /tmp/keycloak deploy/crds
