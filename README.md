@@ -150,7 +150,7 @@ kubectl apply -n keycloak -f ./keycloak/ingress.yml
 ```
   - Lookup admin password
 ```sh
-kubectl get secrets -n keycloak credential-default -ojsonpath="{.data.ADMIN_PASSWORD}" | base64 -d
+kubectl get secrets -n keycloak credential-default -ojsonpath="{.data.ADMIN_PASSWORD}" | base64 -d ;echo;echo
 ```
   - Login to keycloak with username `admin` @ https://keycloak.kongeelabs.arpa
     
