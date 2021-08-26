@@ -1,11 +1,11 @@
 kubectl create namespace keycloak --dry-run=client -oyaml | kubectl apply -f -
 
 git clone https://github.com/keycloak/keycloak-operator.git /tmp/keycloak
-kubectl apply -n keycloak -f /tmp/keycloak deploy/crds
-kubectl apply -n keycloak -f /tmp/keycloak deploy/role.yaml
-kubectl apply -n keycloak -f /tmp/keycloak deploy/role_binding.yaml
-kubectl apply -n keycloak -f /tmp/keycloak deploy/service_account.yaml
-kubectl apply -n keycloak -f /tmp/keycloak deploy/operator.yaml
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/crds
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/role.yaml
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/role_binding.yaml
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/service_account.yaml
+kubectl apply -n keycloak -f /tmp/keycloak/deploy/operator.yaml
 
 kubectl apply -n keycloak -f ./keycloak/selfsigned-keycloak-tls.yml
 kubectl apply -n keycloak -f ./keycloak/keycloak.yml 
