@@ -6,7 +6,7 @@ This guide is written for MacOS and is easily adaptable to Linux hosts.
   - Name Resolution via `/etc/hosts`    
   - Kong config store via Postgres Database    
   - Certificates via Cert Manager Self Signed CA Issuer   
-  - MetalLB deployment for use in other local k8s solutions (optional)
+  - Keycloak OIDC idP
     
 #### 0) Install Prerequisites:
   - Install Homebrew (MacOS only)
