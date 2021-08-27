@@ -36,6 +36,7 @@ git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kin
 ```sh
 cat <<EOF | sudo tee -a /etc/hosts
 127.0.0.1  kongeelabs.arpa
+127.0.0.1  paste.kongeelabs.arpa
 127.0.0.1  portal.kongeelabs.arpa
 127.0.0.1  manager.kongeelabs.arpa
 127.0.0.1  keycloak.kongeelabs.arpa
@@ -139,6 +140,10 @@ http --verify=no https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
   - Lookup Keycloak admin password
 ```sh
 kubectl get secrets -n keycloak credential-default -ojsonpath="{.data.ADMIN_PASSWORD}" | base64 -d ;echo;echo
+```
+  - Check for OIDC Configuration Endpoint
+```
+curl -Lks https://keycloak.kongeelabs.arpa/auth/realms/default/.well-known/openid-configuration | jq .
 ```
       
 -------------------------
