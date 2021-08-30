@@ -29,7 +29,6 @@ helm repo update
 ```
   - Download Github Repositories  
 ```sh
-git clone https://github.com/keycloak/keycloak-operator.git /tmp/keycloak
 git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kind-kongee
 ```
   - create following entries in your /etc/hosts file    
