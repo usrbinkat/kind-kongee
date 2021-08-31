@@ -27,8 +27,15 @@ spec:
   - host: keycloak.kongeelabs.arpa
     http:
       paths:
+      - path: /auth
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak
+            port:
+              name: keycloak
       - path: /
-        pathType: ImplementationSpecific
+        pathType: Prefix
         backend:
           service:
             name: keycloak

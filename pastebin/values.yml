@@ -1,0 +1,78 @@
+# helm repo add privatebin https://privatebin.github.io/helm-chart
+# helm repo update
+# helm install pastebin privatebin/privatebin --namespace pastebin --create-namespace --values pastebin/values.yml
+---
+replicaCount: 1
+image:
+  repository: privatebin/nginx-fpm-alpine
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+datapath: "/srv/data"
+
+service:
+  type: ClusterIP
+  port: 8080
+  portName: http
+# annotations:
+
+controller:
+  kind: Deployment
+  pvc:
+    requests: "1Gi"
+    # storageClass: "-"
+
+ingress:
+  enabled: true
+  annotations:
+    konghq.com/protocols: https
+    kubernetes.io/ingress.class: kong
+    konghq.com/https-redirect-status-code: "301"
+    cert-manager.io/cluster-issuer: certman-selfsigned-issuer
+    cert-manager.io/common-name: "paste.kongeelabs.arpa"
+  hosts:
+    - host: paste.kongeelabs.arpa
+      paths: ["/"]
+# tls: paste.kongeelabs.arpa
+#   - secretName: chart-example-tls
+#     hosts:
+#       - paste.kongeelabs.arpa
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+configs: {}
+  # conf.php: |-
+  #   ; see https://github.com/PrivateBin/PrivateBin/blob/master/cfg/conf.sample.php for config
+
+
+## Enable RBAC
+rbac:
+  create: false
+  serviceAccount:
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+# If true, create & use Pod Security Policy resources. Requires rbac.
+podSecurityPolicy:
+  enabled: false
+  annotations: []

@@ -9,7 +9,7 @@ metadata:
 spec:
   instances: 1
   externalAccess:
-    enabled: True
+    enabled: False
     host: keycloak.kongeelabs.arpa
     tlsTermination: "reencrypt"
   keycloakDeploymentSpec:
