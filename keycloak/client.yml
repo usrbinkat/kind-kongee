@@ -1,3 +1,4 @@
+# https://github.com/keycloak/keycloak-documentation/blob/master/server_installation/topics/operator/keycloak-client-cr.adoc
 apiVersion: keycloak.org/v1alpha1
 kind: KeycloakClient
 metadata:

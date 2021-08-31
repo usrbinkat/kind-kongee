@@ -5,7 +5,8 @@
 replicaCount: 1
 image:
   repository: privatebin/nginx-fpm-alpine
-  pullPolicy: IfNotPresent
+  tag: latest
+  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""
