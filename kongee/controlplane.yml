@@ -10,7 +10,7 @@ deployment:
     daemonset: false
 env:
   role: control_plane
-  plugins: bundled
+  plugins: "bundled,openid-connect"
   log_level: debug
   nginx_worker_processes: "2"
   status_listen:  0.0.0.0:8100

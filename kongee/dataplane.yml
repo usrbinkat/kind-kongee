@@ -11,7 +11,7 @@ deployment:
 env:
   role: data_plane
   database: "off"
-  plugins: bundled
+  plugins: "bundled,openid-connect"
   log_level: debug
   prefix: /kong_prefix/
   nginx_worker_processes: "2"
@@ -29,6 +29,10 @@ env:
   status_error_log: /dev/stdout
   proxy_access_log: /dev/stdout
   proxy_error_log: /dev/stdout
+
+enterprise:
+  enabled: true
+  license_secret: kong-enterprise-license
 
 secretVolumes: 
   - kong-cluster-cert
