@@ -1,17 +1,3 @@
-# helm install pastebin privatebin/privatebin --namespace pastebin --create-namespace --values pastebin/values.yml
-# pip install pbincli
-#
-# Add the following to your ~/.zshrc or ~/.bashrc file and then source the file
-
-# export PBURL="https://paste.kongeelabs.arpa"
-# alias pb="pbincli send --expire 1week --discus --format syntaxhighlighting --compression zlib --no-check-certificate --no-insecure-warning --server ${PBURL}"
-# alias pbfile="cat $1 | pbincli send --expire 1week --discus --format syntaxhighlighting --no-check-certificate --no-insecure-warning --server ${PBURL}"
-# 
-# And now pastebin service cli cmds work:
-# EXAMPLE:
-#  ~$ pbfile pastebin/values.yml 
-#  ~$ echo "hello werld" | pb
-
 namespace: kong
 nameOverride: postgresql
 global:

@@ -2,17 +2,17 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: keycloak.kongeelabs.arpa
+  name: keycloak.kongeelabs.home.arpa
   namespace: keycloak
 spec:
   isCA: false
   duration: 2160h
   renewBefore: 360h
   secretName: keycloak-tls
-  commonName: keycloak.kongeelabs.arpa
+  commonName: keycloak.kongeelabs.home.arpa
   dnsNames:
-  - "keycloak.kongeelabs.arpa"
-  - "*.keycloak.kongeelabs.arpa"
+  - "keycloak.kongeelabs.home.arpa"
+  - "*.keycloak.kongeelabs.home.arpa"
   issuerRef:
     name: certman-selfsigned-issuer
     kind: ClusterIssuer

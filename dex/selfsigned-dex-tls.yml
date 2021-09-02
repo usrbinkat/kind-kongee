@@ -5,10 +5,10 @@ metadata:
   namespace: dex
 spec:
   secretName: dex-tls
-  commonName: dex.kongeelabs.arpa
+  commonName: dex.kongeelabs.home.arpa
   dnsNames:
-  - "dex.kongeelabs.arpa"
-  - "*.dex.kongeelabs.arpa"
+  - "dex.kongeelabs.home.arpa"
+  - "*.dex.kongeelabs.home.arpa"
   renewBefore: 360h
   duration: 2160h
   isCA: false

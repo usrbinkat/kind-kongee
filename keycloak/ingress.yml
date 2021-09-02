@@ -21,10 +21,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - keycloak.kongeelabs.arpa
+        - keycloak.kongeelabs.home.arpa
       secretName: keycloak-tls
   rules:
-  - host: keycloak.kongeelabs.arpa
+  - host: keycloak.kongeelabs.home.arpa
     http:
       paths:
       - path: /auth

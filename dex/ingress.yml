@@ -21,10 +21,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - dex.kongeelabs.arpa
+        - dex.kongeelabs.home.arpa
       secretName: dex-tls
   rules:
-  - host: dex.kongeelabs.arpa
+  - host: dex.kongeelabs.home.arpa
     http:
       paths:
       - path: /

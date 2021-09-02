@@ -1,8 +1,9 @@
 # https://github.com/keycloak/keycloak-documentation/blob/master/server_installation/topics/operator/keycloak-client-cr.adoc
+# get secrets -nkeycloak keycloak-client-secret-apps -ojsonpath="{.data.CLIENT_SECRET}" | base64 -d;echo
 apiVersion: keycloak.org/v1alpha1
 kind: KeycloakClient
 metadata:
-  name: kong-client
+  name: apps
   namespace: keycloak
   labels:
     app: default
@@ -11,6 +12,29 @@ spec:
     matchLabels:
       app: default
   client:
-    id: "default"
-    clientId: default-client-secret
-    secret: default-client-secret
+    id: "apps"
+    name: "apps"
+    enabled: true
+    clientId: "apps"
+    protocol: openid-connect  
+    secret: supersecretclienttoken
+    standardFlowEnabled: true
+    serviceAccountsEnabled: true
+    directAccessGrantsEnabled: true    
+    clientAuthenticatorType: client-secret
+    baseUrl: "https://paste.kongeelabs.home.arpa/"
+    redirectUris:
+      - "https://paste.kongeelabs.home.arpa/"
+    webOrigins:
+      - "'*'."
+#    publicClient: true
+#    alwaysDisplayInConsole: true
+#    bearerOnly: true
+#    standardFlowEnabled: true
+#    surrogateAuthRequired: false
+#    consentRequired: false
+#    implicitFlowEnabled: false
+#    authorizationServicesEnabled: true
+#    frontchannelLogout: false
+#    fullScopeAllowed: true
+#    nodeReRegistrationTimeout: -1

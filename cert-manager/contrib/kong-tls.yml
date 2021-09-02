@@ -1,15 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: kongeelabs.arpa
+  name: kongeelabs.home.arpa
   namespace: kong
 spec:
   secretName: kong-tls
-  commonName: kongeelabs.arpa
+  commonName: kongeelabs.home.arpa
   dnsNames:
-  - kongeelabs.arpa
-  - portal.kongeelabs.arpa
-  - manager.kongeelabs.arpa
+  - kongeelabs.home.arpa
+  - portal.kongeelabs.home.arpa
+  - manager.kongeelabs.home.arpa
   renewBefore: 360h
   duration: 2160h
   issuerRef:

@@ -34,11 +34,11 @@ git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kin
   - create following entries in your /etc/hosts file    
 ```sh
 cat <<EOF | sudo tee -a /etc/hosts
-127.0.0.1  kongeelabs.arpa
-127.0.0.1  paste.kongeelabs.arpa
-127.0.0.1  portal.kongeelabs.arpa
-127.0.0.1  manager.kongeelabs.arpa
-127.0.0.1  keycloak.kongeelabs.arpa
+127.0.0.1  kongeelabs.home.arpa
+127.0.0.1  paste.kongeelabs.home.arpa
+127.0.0.1  portal.kongeelabs.home.arpa
+127.0.0.1  manager.kongeelabs.home.arpa
+127.0.0.1  keycloak.kongeelabs.home.arpa
 EOF
 ```
   - NOTE: be sure to open Docker Desktop before continuing if you havent done so on this mac before
@@ -128,21 +128,21 @@ kubectl apply -n keycloak -f ./keycloak/ingress.yml
 ```
 
 #### Final) Test Services
-  - Open Kong Manager in browser: https://manager.kongeelabs.arpa    
+  - Open Kong Manager in browser: https://manager.kongeelabs.home.arpa    
   - NOTE: login to web gui with user:pass `kong_admin`:`kong_admin`
   - Test Kong Admin API
   - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
 ```
-http --verify=no https://manager.kongeelabs.arpa/api kong-admin-token:$TOKEN
+http --verify=no https://manager.kongeelabs.home.arpa/api kong-admin-token:$TOKEN
 ```
-  - Login to keycloak with username `admin` @ https://keycloak.kongeelabs.arpa
+  - Login to keycloak with username `admin` @ https://keycloak.kongeelabs.home.arpa
   - Lookup Keycloak admin password
 ```sh
 kubectl get secrets -n keycloak credential-default -ojsonpath="{.data.ADMIN_PASSWORD}" | base64 -d ;echo;echo
 ```
   - Check for OIDC Configuration Endpoint
 ```
-curl -Lks https://keycloak.kongeelabs.arpa/auth/realms/default/.well-known/openid-configuration | jq .
+curl -Lks https://keycloak.kongeelabs.home.arpa/auth/realms/default/.well-known/openid-configuration | jq .
 ```
       
 -------------------------

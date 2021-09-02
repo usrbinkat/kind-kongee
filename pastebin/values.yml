@@ -1,3 +1,17 @@
+# helm install pastebin privatebin/privatebin --namespace pastebin --create-namespace --values pastebin/values.yml
+# pip install pbincli
+#
+# Add the following to your ~/.zshrc or ~/.bashrc file and then source the file
+
+# export PBURL="https://paste.kongeelabs.home.arpa"
+# alias pb="pbincli send --expire 1week --discus --format syntaxhighlighting --compression zlib --no-check-certificate --no-insecure-warning --server ${PBURL}"
+# alias pbfile="cat $1 | pbincli send --expire 1week --discus --format syntaxhighlighting --no-check-certificate --no-insecure-warning --server ${PBURL}"
+# 
+# And now pastebin service cli cmds work:
+# EXAMPLE:
+#  ~$ pbfile pastebin/values.yml 
+#  ~$ echo "hello werld" | pb
+
 # helm repo add privatebin https://privatebin.github.io/helm-chart
 # helm repo update
 # helm install pastebin privatebin/privatebin --namespace pastebin --create-namespace --values pastebin/values.yml
@@ -31,14 +45,14 @@ ingress:
     kubernetes.io/ingress.class: kong
     konghq.com/https-redirect-status-code: "301"
     cert-manager.io/cluster-issuer: certman-selfsigned-issuer
-    cert-manager.io/common-name: "paste.kongeelabs.arpa"
+    cert-manager.io/common-name: "paste.kongeelabs.home.arpa"
   hosts:
-    - host: paste.kongeelabs.arpa
+    - host: paste.kongeelabs.home.arpa
       paths: ["/"]
-# tls: paste.kongeelabs.arpa
+# tls: paste.kongeelabs.home.arpa
 #   - secretName: chart-example-tls
 #     hosts:
-#       - paste.kongeelabs.arpa
+#       - paste.kongeelabs.home.arpa
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

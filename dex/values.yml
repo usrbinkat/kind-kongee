@@ -1,7 +1,7 @@
 replicaCount: 1
 
 config:
-  issuer: "https://dex.kongeelabs.arpa"
+  issuer: "https://dex.kongeelabs.home.arpa"
   enablePasswordDB: true
   storage:
     type: memory
@@ -16,10 +16,10 @@ ingress:
     ingress.kubernetes.io/service-upstream: "true"
   tls:
     - hosts:
-        - dex.kongeelabs.arpa
+        - dex.kongeelabs.home.arpa
       secretName: dex-tls
   hosts:
-    - host: dex.kongeelabs.arpa
+    - host: dex.kongeelabs.home.arpa
       paths:
         - path: /
           pathType: ImplementationSpecific
