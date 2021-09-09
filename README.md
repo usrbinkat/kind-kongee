@@ -68,7 +68,12 @@ kubectl get all -n cert-manager
 #### 3) Deploy Postgres as Kong Configuration Store
   - Create Postgres Password Secret
 ```sh
-kubectl create secret generic kong-postgres-password -n kong --from-literal=password=kong --dry-run=client -oyaml | kubectl apply -n kong -f -
+kubectl create secret generic kong-postgres-password -n kong --dry-run=client -oyaml \
+    --from-literal=user=kong \
+    --from-literal=database=kong \
+    --from-literal=password=kong \
+    --from-literal=pg_host="postgres-postgresql.kong.svc.cluster.local" \
+  | kubectl apply -n kong -f -
 ```
   - Deploy Postgres
 ```sh
