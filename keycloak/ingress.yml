@@ -12,11 +12,11 @@ metadata:
   labels:
     app.kubernetes.io/name: keycloak
   annotations:
-    # User Facing Redirect from http to https
     konghq.com/protocols: "https"
-    konghq.com/strip-path: "false"
+    konghq.com/strip-path: "true"
     konghq.com/preserve-host: "true"
     kubernetes.io/ingress.class: "kong"
+    konghq.com/https-redirect-status-code: '302'
     ingress.kubernetes.io/service-upstream: "true"
 spec:
   tls:

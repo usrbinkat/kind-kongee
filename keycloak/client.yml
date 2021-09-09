@@ -3,37 +3,37 @@
 apiVersion: keycloak.org/v1alpha1
 kind: KeycloakClient
 metadata:
-  name: apps
+  name: pastebin
   namespace: keycloak
   labels:
-    app: default
+    realm: default
 spec:
   realmSelector:
     matchLabels:
-      app: default
+      realm: default
   client:
-    id: "apps"
     name: "apps"
     enabled: true
     clientId: "apps"
+    emailVerified: True
     protocol: openid-connect  
-    secret: supersecretclienttoken
+    implicitFlowEnabled: true
     standardFlowEnabled: true
     serviceAccountsEnabled: true
     directAccessGrantsEnabled: true    
     clientAuthenticatorType: client-secret
-    baseUrl: "https://paste.kongeelabs.home.arpa/"
     redirectUris:
-      - "https://paste.kongeelabs.home.arpa/"
+      - "https://paste.kongeelabs.home.arpa/*"
     webOrigins:
-      - "'*'."
+      - "*"
+#    id: "apps"
+#    baseUrl: "https://paste.kongeelabs.home.arpa/"
+#    secret: supersecretclienttoken
 #    publicClient: true
 #    alwaysDisplayInConsole: true
 #    bearerOnly: true
-#    standardFlowEnabled: true
 #    surrogateAuthRequired: false
 #    consentRequired: false
-#    implicitFlowEnabled: false
 #    authorizationServicesEnabled: true
 #    frontchannelLogout: false
 #    fullScopeAllowed: true

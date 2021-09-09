@@ -2,23 +2,22 @@
 apiVersion: keycloak.org/v1alpha1
 kind: KeycloakUser
 metadata:
-  name: "realm-default-user-test"
+  name: "test"
   labels:
-    app: "default"
+    realm: "default"
   generation: 4
   finalizers:
   - user.cleanup
 spec:
   realmSelector:
     matchLabels:
-      app: "default"
-     #realm: "default"
+      realm: "default"
   user:
     enabled: true
     username: test
     lastName: User
     firstName: Test
-    email: test@redhat.com
+    email: test@home.arpa
     emailVerified: true
     credentials:
     - type: password

@@ -5,15 +5,26 @@ metadata:
   name: default
   namespace: keycloak
   labels:
-    app: default
+    realm: default
 spec:
   instances: 1
-  externalAccess:
-    enabled: False
-    host: keycloak.kongeelabs.home.arpa
-    tlsTermination: "reencrypt"
+  containers:
+    limits:
+    - default:
+      memory: 4G
+      cpu: 2        
+      defaultRequest:
+        memory: 1G
+        cpu: 1
   keycloakDeploymentSpec:
     experimental:
       env:
         - name: PROXY_ADDRESS_FORWARDING
           value: 'true'
+# extensions:
+#   - >-
+#     https://github.com/aerogear/keycloak-metrics-spi/releases/download/2.4.0/keycloak-metrics-spi-2.4.0.jar
+#  externalAccess:
+#    enabled: False
+#    host: keycloak.kongeelabs.home.arpa
+#    tlsTermination: "reencrypt"
