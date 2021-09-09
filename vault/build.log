@@ -1,0 +1,10 @@
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
+helm install csi-secrets-store secrets-store-csi-driver/secrets-store-csi-driver --namespace kube-system
+kubectl exec -nvault -it vault-0 -- /bin/sh
+vault kv put secret/db-pass password="password"
+vault kv get secret/db-pass
+vault token create
+https://vault.microk8s.arpa/ui/vault/auth?with=userpass
+vault auth enable userpass
+https://secrets-store-csi-driver.sigs.k8s.io/concepts.html
