@@ -33,12 +33,13 @@ git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kin
 ```
   - create following entries in your /etc/hosts file    
 ```sh
+DATAPLANE_ADDRESS=127.0.0.1
 cat <<EOF | sudo tee -a /etc/hosts
-127.0.0.1  kongeelabs.home.arpa
-127.0.0.1  paste.kongeelabs.home.arpa
-127.0.0.1  portal.kongeelabs.home.arpa
-127.0.0.1  manager.kongeelabs.home.arpa
-127.0.0.1  keycloak.kongeelabs.home.arpa
+${DATAPLANE_ADDRESS}  kongeelabs.home.arpa
+${DATAPLANE_ADDRESS}  paste.kongeelabs.home.arpa
+${DATAPLANE_ADDRESS}  portal.kongeelabs.home.arpa
+${DATAPLANE_ADDRESS}  manager.kongeelabs.home.arpa
+${DATAPLANE_ADDRESS}  keycloak.kongeelabs.home.arpa
 EOF
 ```
   - NOTE: be sure to open Docker Desktop before continuing if you havent done so on this mac before
