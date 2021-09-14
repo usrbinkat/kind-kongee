@@ -33,7 +33,7 @@ git clone https://github.com/usrbinkat/kind-kongee.git ~/kind-kongee && cd ~/kin
 ```
   - create following entries in your /etc/hosts file    
 ```sh
-DATAPLANE_ADDRESS=127.0.0.1
+export DATAPLANE_ADDRESS=127.0.0.1
 cat <<EOF | sudo tee -a /etc/hosts
 ${DATAPLANE_ADDRESS}  kongeelabs.home.arpa
 ${DATAPLANE_ADDRESS}  paste.kongeelabs.home.arpa
