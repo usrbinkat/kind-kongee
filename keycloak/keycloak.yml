@@ -8,14 +8,6 @@ metadata:
     realm: default
 spec:
   instances: 1
-  containers:
-    limits:
-    - default:
-      memory: 4G
-      cpu: 2        
-      defaultRequest:
-        memory: 1G
-        cpu: 1
   keycloakDeploymentSpec:
     experimental:
       env:
