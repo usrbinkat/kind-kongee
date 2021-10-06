@@ -15,7 +15,6 @@ spec:
     name: "apps"
     enabled: true
     clientId: "apps"
-    emailVerified: True
     protocol: openid-connect  
     implicitFlowEnabled: true
     standardFlowEnabled: true

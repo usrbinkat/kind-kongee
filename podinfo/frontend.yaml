@@ -1,0 +1,24 @@
+# helm upgrade --install --wait frontend podinfo/podinfo --create-namespace --namespace podinfo --values podinfo/frontend.yaml
+#
+replicaCount: 2
+backend: "http://backend-podinfo:9898/echo"
+
+ingress:
+  enabled: true
+# className: "kong"
+  annotations:
+    konghq.com/protocols: "https"
+    konghq.com/strip-path: "true"
+    konghq.com/preserve-host: "true"
+    kubernetes.io/ingress.class: "kong"
+    konghq.com/https-redirect-status-code: '302'
+    ingress.kubernetes.io/service-upstream: "true"
+  hosts:
+    - host: podinfo.kongeelabs.home.arpa
+      paths:
+        - path: /*
+          pathType: ImplementationSpecific
+  tls:
+    - hosts:
+        - podinfo.kongeelabs.home.arpa
+      secretName: podinfo-tls

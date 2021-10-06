@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: podinfo-kong-ingress
+  namespace: podinfo
+  labels:
+    app.kubernetes.io/name: podinfo
+  annotations:
+    konghq.com/protocols: "https"
+    konghq.com/strip-path: "true"
+    konghq.com/preserve-host: "true"
+    kubernetes.io/ingress.class: "kong"
+    konghq.com/https-redirect-status-code: '302'
+    ingress.kubernetes.io/service-upstream: "true"
+spec:
+  tls:
+    - hosts:
+        - podinfo.kongeelabs.home.arpa
+      secretName: podinfo-tls
+  rules:
+  - host: podinfo.kongeelabs.home.arpa
+    http:
+      paths:
+      - path: /*
+        pathType: Prefix
+        backend:
+          service:
+            name: podinfo
+            port:
+              number: 9898
