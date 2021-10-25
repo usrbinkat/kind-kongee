@@ -4,13 +4,13 @@ backend: "http://backend-podinfo:9898/echo"
 
 ingress:
   enabled: true
-# className: "kong"
+  className: "nginx"
   annotations:
-    konghq.com/protocols: "https"
-    konghq.com/strip-path: "true"
-    konghq.com/preserve-host: "true"
-    kubernetes.io/ingress.class: "kong"
-    konghq.com/https-redirect-status-code: '302'
+#   konghq.com/protocols: "https"
+#   konghq.com/strip-path: "true"
+#   konghq.com/preserve-host: "true"
+#   kubernetes.io/ingress.class: "kong"
+#   konghq.com/https-redirect-status-code: '302'
     ingress.kubernetes.io/service-upstream: "true"
   hosts:
     - host: podinfo.kongeelabs.home.arpa

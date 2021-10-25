@@ -3,7 +3,7 @@ namespace: kong
 replicaCount: 1
 image:
   repository: kong/kong-gateway
-  tag: "2.5"
+  tag: "2.6"
 deployment:
   kong:
     enabled: true
@@ -128,7 +128,7 @@ status:
 ingressController:
   enabled: true
   installCRDs: false
-  args: ["--v=5"]
+# args: ["--v=5"]
   env:
     publish_service: kong/dataplane-kong-proxy
     kong_admin_tls_skip_verify: true
@@ -161,7 +161,7 @@ admin:
     annotations:
       konghq.com/protocols: "https"
       konghq.com/strip-path: "true"
-      kubernetes.io/ingress.class: "kong"
+      kubernetes.io/ingress.class: "kong-ingress"
       konghq.com/https-redirect-status-code: "301"
   http:
     enabled: false
@@ -208,7 +208,7 @@ manager:
     tls: kong-tls
     annotations:
       konghq.com/protocols: "https"
-      kubernetes.io/ingress.class: "kong"
+      kubernetes.io/ingress.class: "kong-ingress"
       konghq.com/https-redirect-status-code: "301"
       konghq.com/strip-path: "false"
   http:

@@ -1,9 +1,10 @@
+# https://docs.konghq.com/kubernetes-ingress-controller/2.0.x/troubleshooting/#inspecting-network-traffic-with-a-tcpdump-sidecar
 # helm install dataplane kong/kong --namespace kong --values ./dataplane.yml --set ingressController.installCRDs=false
 namespace: kong
 replicaCount: 1
 image:
   repository: kong/kong-gateway
-  tag: "2.5"
+  tag: "2.6"
 deployment:
   kong:
     enabled: true
@@ -41,23 +42,23 @@ secretVolumes:
 ################################
 ## Kind localhost hostport
 proxy:
-  enabled: true
-  type: ClusterIP
-  http:
-    enabled: true
-    hostPort: 80
-    containerPort: 8080
-  tls:
-    enabled: true
-    hostPort: 443
-    containerPort: 8443
-  ingress:
-    enabled: false
-  labels:
-    enable-metrics: true
-  annotations:
-    prometheus.io/port: "9542"
-    prometheus.io/scrape: "true"
+ enabled: true
+ type: ClusterIP
+ http:
+   enabled: true
+   hostPort: 80
+   containerPort: 8080
+ tls:
+   enabled: true
+   hostPort: 443
+   containerPort: 8443
+ ingress:
+   enabled: false
+ labels:
+   enable-metrics: true
+ annotations:
+   prometheus.io/port: "9542"
+   prometheus.io/scrape: "true"
 
 ################################
 ## MetalLB LoadBalancer
