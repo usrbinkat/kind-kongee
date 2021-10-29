@@ -52,10 +52,10 @@ env:
   admin_gui_url: "https://manager.kongeelabs.home.arpa/"
   admin_api_uri: "https://manager.kongeelabs.home.arpa/api"
   admin_gui_host: "manager.kongeelabs.home.arpa"
-  admin_ssl_cert: /etc/secrets/kong-tls/tls.crt
-  admin_ssl_cert_key: /etc/secrets/kong-tls/tls.key
-  admin_gui_ssl_cert: /etc/secrets/kong-tls/tls.crt
-  admin_gui_ssl_cert_key: /etc/secrets/kong-tls/tls.key
+  admin_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  admin_ssl_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
+  admin_gui_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  admin_gui_ssl_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
   admin_gui_access_log: /dev/stdout
   admin_gui_error_log: /dev/stdout
   admin_access_log: /dev/stdout
@@ -80,7 +80,7 @@ env:
 
 secretVolumes: 
   - kong-cluster-cert
-  - kong-tls
+  - kong-controlplane-services-tls
 
 proxy:
   enabled: false
@@ -155,7 +155,7 @@ admin:
     enabled: true
     path: /api
     hostname: manager.kongeelabs.home.arpa
-    tls: kong-tls
+    tls: kong-controlplane-services-tls
     annotations:
       konghq.com/protocols: "https"
       konghq.com/strip-path: "true"
@@ -179,7 +179,7 @@ portalapi:
     enabled: true
     path: /api
     hostname: portal.kongeelabs.home.arpa
-    tls: kong-tls
+    tls: kong-controlplane-services-tls
     annotations:
       konghq.com/protocols: "https"
       konghq.com/strip-path: "true"
@@ -203,7 +203,7 @@ manager:
     enabled: true
     path: /
     hostname: manager.kongeelabs.home.arpa
-    tls: kong-tls
+    tls: kong-controlplane-services-tls
     annotations:
       konghq.com/protocols: "https"
       kubernetes.io/ingress.class: "kong-ingress"
@@ -229,7 +229,7 @@ portal:
     enabled: true
     path: /
     hostname: portal.kongeelabs.home.arpa
-    tls: kong-tls
+    tls: kong-controlplane-services-tls
     annotations:
       konghq.com/protocols: "https"
       kubernetes.io/ingress.class: "kong"

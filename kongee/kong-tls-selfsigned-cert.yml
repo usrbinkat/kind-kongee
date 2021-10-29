@@ -4,7 +4,7 @@ metadata:
   name: kongeelabs.home.arpa
   namespace: kong
 spec:
-  secretName: kong-tls
+  secretName: kong-controlplane-services-tls
   commonName: kongeelabs.home.arpa
   dnsNames:
   - "kongeelabs.home.arpa"

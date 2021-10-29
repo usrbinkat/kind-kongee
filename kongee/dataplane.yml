@@ -37,49 +37,50 @@ enterprise:
 
 secretVolumes: 
   - kong-cluster-cert
-  - kong-tls
+# - kong-controlplane-services-tls
+# - kong-tls
 
 ################################
 ## Kind localhost hostport
-proxy:
- enabled: true
- type: ClusterIP
- http:
-   enabled: true
-   hostPort: 80
-   containerPort: 8080
- tls:
-   enabled: true
-   hostPort: 443
-   containerPort: 8443
- ingress:
-   enabled: false
- labels:
-   enable-metrics: true
- annotations:
-   prometheus.io/port: "9542"
-   prometheus.io/scrape: "true"
+#proxy:
+# enabled: true
+# type: ClusterIP
+# http:
+#   enabled: true
+#   hostPort: 80
+#   containerPort: 8080
+# tls:
+#   enabled: true
+#   hostPort: 443
+#   containerPort: 8443
+# ingress:
+#   enabled: false
+# labels:
+#   enable-metrics: true
+# annotations:
+#   prometheus.io/port: "9542"
+#   prometheus.io/scrape: "true"
 
 ################################
 ## MetalLB LoadBalancer
-#proxy:
-#  enabled: true
-#  type: LoadBalancer   
-#  http:
-#    enabled: false
-#    servicePort: 80
-#    containerPort: 8080
-#  tls:
-#    enabled: true
-#    servicePort: 443
-#    containerPort: 8443
-#  ingress:
-#    enabled: false
-#  labels:
-#    enable-metrics: true
-#  annotations:
-#    prometheus.io/port: "9542"
-#    prometheus.io/scrape: "true"
+proxy:
+  enabled: true
+  type: LoadBalancer   
+  http:
+    enabled: false
+    servicePort: 80
+    containerPort: 8080
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8443
+  ingress:
+    enabled: false
+  labels:
+    enable-metrics: true
+  annotations:
+    prometheus.io/port: "9542"
+    prometheus.io/scrape: "true"
 
 admin:
   enabled: false
