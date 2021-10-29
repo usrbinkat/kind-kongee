@@ -108,7 +108,6 @@ enterprise:
   portal:
     enabled: true
   rbac:
-    # TODO: enable rbac
     enabled: true
     admin_gui_auth: basic-auth
     session_conf_secret: kong-session-config
@@ -128,7 +127,6 @@ status:
 ingressController:
   enabled: true
   installCRDs: false
-# args: ["--v=5"]
   env:
     publish_service: kong/dataplane-kong-proxy
     kong_admin_tls_skip_verify: true
