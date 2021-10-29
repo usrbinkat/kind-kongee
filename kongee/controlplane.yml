@@ -148,7 +148,7 @@ migrations:
 
 admin:
   enabled: true
-  type: ClusterIP 
+  type: ClusterIP
   annotations:
     konghq.com/protocol: "https"
   ingress:
@@ -159,7 +159,7 @@ admin:
     annotations:
       konghq.com/protocols: "https"
       konghq.com/strip-path: "true"
-      kubernetes.io/ingress.class: "kong-ingress"
+      kubernetes.io/ingress.class: "kong"
       konghq.com/https-redirect-status-code: "301"
   http:
     enabled: false
@@ -206,7 +206,7 @@ manager:
     tls: kong-controlplane-services-tls
     annotations:
       konghq.com/protocols: "https"
-      kubernetes.io/ingress.class: "kong-ingress"
+      kubernetes.io/ingress.class: "kong"
       konghq.com/https-redirect-status-code: "301"
       konghq.com/strip-path: "false"
   http:
