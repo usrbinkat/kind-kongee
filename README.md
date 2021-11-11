@@ -57,7 +57,7 @@ kubectl create namespace kong --dry-run=client -oyaml | kubectl apply -f -
 #### 2) Deploy Cert Manager & Self Signed CA Certificate Issuer
 ```sh
 kubectl create namespace cert-manager --dry-run=client -oyaml | kubectl apply -f -
-helm install cert-manager jetstack/cert-manager \
+helm upgrade --install cert-manager jetstack/cert-manager \
   --namespace cert-manager --set installCRDs=true \
   --values ./cert-manager/helm-jetstack-certmanager-values.yml ; sleep 4
 ```
@@ -78,7 +78,7 @@ kubectl create secret generic kong-postgres-password -n kong --dry-run=client -o
 ```
   - Deploy Postgres
 ```sh
-helm install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
+helm upgrade --install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
 ```
     
 #### 4) Deploy Kong Gateway Enterprise Edition in Hybrid Mode
