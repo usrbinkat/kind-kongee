@@ -118,8 +118,8 @@ kubectl create secret generic kong-session-config -n kong \
 ```
   - Install Kong Data Plane & Control Plane
 ```sh
-helm install controlplane kong/kong --namespace kong --values ./kongee/controlplane.yml
-helm install dataplane    kong/kong --namespace kong --values ./kongee/dataplane.yml
+helm upgrade --install controlplane kong/kong --namespace kong --values ./kongee/controlplane.yml
+helm upgrade --install dataplane    kong/kong --namespace kong --values ./kongee/dataplane.yml
 ```
     
 #### 5) Install Keycloak
