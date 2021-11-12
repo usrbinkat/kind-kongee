@@ -47,6 +47,8 @@ EOF
 #### 1) Start Kind Cluster:
   - Start Kubernetes-in-Docker cluster
 ```sh
+docker volume create worker1-containerd
+docker volume create control1-containerd
 kind create cluster --config platform/kind/config.yml
 ```
   - Create Kong Namespaces
