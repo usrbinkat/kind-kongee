@@ -51,6 +51,10 @@ docker volume create worker1-containerd
 docker volume create control1-containerd
 kind create cluster --config platform/kind/config.yml
 ```
+  - Install Kube Prometheus for Kontena Lens metrics
+```sh
+helm install kube-prometheus bitnami/kube-prometheus --namespace prometheus --create-namespace
+```
   - Create Kong Namespaces
 ```sh
 kubectl create namespace kong --dry-run=client -oyaml | kubectl apply -f -
