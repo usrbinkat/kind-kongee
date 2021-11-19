@@ -1,0 +1,192 @@
+deployment:
+  kong:
+    enabled: true
+
+image:
+  repository: docker.io/kong/kong-gateway
+  tag: 2.6.0.0-alpine
+
+env:
+  role: control_plane
+  cluster_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  cluster_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
+
+  proxy_listen: "off"
+  
+  database: "postgres"
+  pg_host: "kong-db-postgresql.kong.svc.cluster.local"
+  pg_port: 5432
+  pg_user: kong
+  pg_password: 
+    valueFrom:
+      secretKeyRef:
+        name: kong-db-password #CHANGEME
+        key: postgresql-password #CHANGEME
+
+  admin_api_uri: "https://admin-proxy.li.k8s"
+  admin_gui_url: "https://manager-proxy.li.k8s"
+  portal_api_url: "https://portalapi-proxy.li.k8s"
+  portal_gui_protocol: "https"
+  portal_gui_host: "portal-proxy.li.k8s"
+
+  log_level: debug
+  admin_error_log: /dev/stderr
+  admin_access_log: /dev/stdout
+  admin_gui_access_log: /dev/stdout
+  admin_gui_error_log: /dev/stderr
+
+  password:
+    valueFrom:
+      secretKeyRef:
+        name: kong-enterprise-superuser-password
+        key: password
+
+secretVolumes:
+- kong-controlplane-services-tls
+
+enterprise:
+  enabled: true
+  license_secret: kong-enterprise-license
+  vitals:
+    enabled: true
+  portal:
+    enabled: true
+  rbac:
+    enabled: true
+    admin_gui_auth: basic-auth
+    session_conf_secret: kong-session-config
+
+admin:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8001
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8444
+    parameters:
+      - http2
+  ingress:
+    enabled: true
+    tls: kong-controlplane-admin-tls
+    hostname: admin-proxy.li.k8s
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      cert-manager.io/cluster-issuer: "certman-selfsigned-issuer"
+    path: /
+
+cluster:
+  enabled: true
+  annotations: {}
+  #  service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+  tls:
+    enabled: true
+    servicePort: 8005
+    containerPort: 8005
+    parameters: []
+  type: ClusterIP
+  externalIPs: []
+
+clustertelemetry:
+  enabled: true
+  annotations: {}
+  tls:
+    enabled: true
+    servicePort: 8006
+    containerPort: 8006
+    parameters: []
+  type: ClusterIP
+  externalIPs: []
+
+manager:
+  enabled: true
+  type: ClusterIP
+
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8002
+  tls:
+    # Enable HTTPS listen for Kong Manager
+    enabled: true
+    servicePort: 443
+    containerPort: 8445
+    parameters:
+      - http2
+  ingress:
+    enabled: true
+    tls: kong-controlplane-manager-tls
+    hostname: manager-proxy.li.k8s
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      cert-manager.io/cluster-issuer: "certman-selfsigned-issuer"
+    path: /
+
+proxy:
+  enabled: false
+
+portal:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8003
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8446
+    parameters:
+      - http2
+  ingress:
+    enabled: false
+    tls: kong-controlplane-portal-tls
+    hostname: portal-proxy.li.k8s
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    path: /
+
+portalapi:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8004
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8447
+    parameters:
+      - http2
+  ingress:
+    enabled: false
+    tls: kong-controlplane-portalapi-tls
+    hostname: portalapi-proxy.li.k8s
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    path: /
+
+
+
+postgresql:
+  enabled: false
+  
+ingressController:
+  enabled: true
+  installCRDs: false
+  env:
+    kong_admin_tls_skip_verify: true
+    kong_admin_token:
+      valueFrom:
+        secretKeyRef:
+          name: kong-enterprise-superuser-password 
+          key: password
+    publish_service: kong/my-kong-dp-kong-proxy

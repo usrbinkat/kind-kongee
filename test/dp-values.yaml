@@ -1,0 +1,79 @@
+deployment:
+  kong:
+    enabled: true
+
+image:
+  repository: docker.io/kong/kong-gateway
+  tag: 2.6.0.0-alpine
+
+env:
+  prefix: /kong_prefix/
+  database: "off"
+
+  role: data_plane
+  cluster_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  cluster_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
+  lua_ssl_trusted_certificate: /etc/secrets/kong-controlplane-services-tls/tls.crt
+
+  cluster_control_plane: my-kong-cp-kong-cluster.kong.svc.cluster.local:8005
+  cluster_telemetry_endpoint: my-kong-cp-kong-clustertelemetry.kong.svc.cluster.local:8006 # Enterprise-only
+
+  proxy_url: "https://proxy.li.k8s"
+
+  log_level: debug
+  proxy_access_log: /dev/stdout
+  proxy_error_log: /dev/stderr
+
+enterprise:
+  enabled: true
+  license_secret: kong-enterprise-license
+  vitals:
+    enabled: true
+
+proxy:
+  enabled: true
+  type: ClusterIP
+  http:
+    enabled: true
+    servicePort: 80
+    containerPort: 8000
+  tls:
+    enabled: true
+    servicePort: 443
+    containerPort: 8443
+  ingress:
+    enabled: true
+    tls: kong-controlplane-services-tls
+    hostname: proxy.li.k8s
+    annotations: 
+      kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    path: /
+
+# replicaCount: 2
+
+# autoscaling:
+#   enabled: true
+#   minReplicas: 2
+#   maxReplicas: 5
+  
+secretVolumes:
+- kong-controlplane-services-tls
+
+ingressController:
+  enabled: false
+
+admin:
+  enabled: false
+
+manager:
+  enabled: false
+
+portal:
+  enabled: false
+
+portalapi:
+  enabled: false
+
+clustertelemetry:
+  enabled: false

@@ -9,16 +9,15 @@ deployment:
     enabled: true
     daemonset: false
 env:
-  trusted_ips: "0.0.0.0/0,::/0"
   role: control_plane
-  plugins: "bundled,openid-connect"
   log_level: debug
   nginx_worker_processes: "2"
   status_listen:  0.0.0.0:8100
   cluster_listen: 0.0.0.0:8005
   cluster_telemetry_listen: 0.0.0.0:8006
   cluster_data_plane_purge_delay: 60
-  lua_package_path: /opt/?.lua;;
+  lua_package_path: "/opt/?.lua;;"
+# trusted_ips: "0.0.0.0/0,::/0"
   prefix: /kong_prefix/
   password:
     valueFrom:
@@ -26,8 +25,8 @@ env:
         name: kong-enterprise-superuser-password
         key: password
 
-  proxy_stream_error_log: /dev/stdout
   proxy_stream_access_log: /dev/stdout
+  proxy_stream_error_log: /dev/stdout
   status_error_log: /dev/stdout
   proxy_access_log: /dev/stdout
   proxy_error_log: /dev/stdout
@@ -44,15 +43,15 @@ env:
   pg_ssl_version: tlsv1_2
   pg_ssl: on
 
-  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
-  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  cluster_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  cluster_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
   lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt 
 
   vitals: on
   admin_gui_protocol: https
-  admin_gui_url: "https://manager.kongeelabs.home.arpa/"
-  admin_api_uri: "https://manager.kongeelabs.home.arpa/api"
   admin_gui_host: "manager.kongeelabs.home.arpa"
+  admin_gui_url: "https://manager.kongeelabs.home.arpa"
+  admin_api_uri: "https://api.kongeelabs.home.arpa"
   admin_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
   admin_ssl_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
   admin_gui_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
@@ -80,7 +79,6 @@ env:
         key: portal_session_conf
 
 secretVolumes: 
-  - kong-cluster-cert
   - kong-controlplane-services-tls
 
 proxy:
@@ -149,22 +147,9 @@ migrations:
 
 admin:
   enabled: true
-  type: NodePort
+  type: ClusterIP
   annotations:
     konghq.com/protocol: "https"
-  ingress:
-    enabled: true
-    path: /api
-    hostname: manager.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
-    annotations:
-      kubernetes.io/ingress.class: "public"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-     #konghq.com/protocols: "https"
-     #konghq.com/strip-path: "true"
-     #konghq.com/https-redirect-status-code: "301"
-     #nginx.ingress.kubernetes.io/app-root: "/"
-     #nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
   http:
     enabled: false
   tls:
@@ -173,47 +158,52 @@ admin:
     containerPort: 8444
     parameters:
     - http2
+  ingress:
+    enabled: true
+    hostname: api.kongeelabs.home.arpa
+    tls: kong-controlplane-admin-tls
+    path: /
+    ingressClassName: nginx
+    annotations: 
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      cert-manager.io/cluster-issuer: "certman-selfsigned-issuer"
+#     nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
+#     konghq.com/https-redirect-status-code: "301"
+#     konghq.com/strip-path: "false"
+#     konghq.com/protocols: "https"
 
 manager:
   enabled: true
-  type: NodePort
-# annotations:
-#   konghq.com/protocol: "https"
-  ingress:
-    enabled: true
-    path: /
-    hostname: manager.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
-    annotations:
-      kubernetes.io/ingress.class: "public"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+  type: ClusterIP
+  annotations:
+    konghq.com/protocol: "https"
   http:
     enabled: false
-    servicePort: 8002
-    containerPort: 8002
   tls:
     enabled: true
     servicePort: 8445
     containerPort: 8445
     parameters:
     - http2
+  ingress:
+    enabled: true
+    hostname: manager.kongeelabs.home.arpa
+    tls: kong-controlplane-manager-tls
+    path: /
+    ingressClassName: nginx
+    annotations: 
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      cert-manager.io/cluster-issuer: "certman-selfsigned-issuer"
+#     nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
+#     konghq.com/https-redirect-status-code: "301"
+#     konghq.com/strip-path: "false"
+#     konghq.com/protocols: "https"
 
 portalapi:
   enabled: true
   type: ClusterIP
   annotations:
     konghq.com/protocol: "https"
-  ingress:
-    enabled: true
-    path: /api
-    hostname: portal.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
-    annotations:
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/protocols: "https"
-      konghq.com/strip-path: "true"
-      nginx.ingress.kubernetes.io/app-root: "/"
-      konghq.com/https-redirect-status-code: "301"
   http:
     enabled: false
   tls:
@@ -222,22 +212,37 @@ portalapi:
     containerPort: 8447
     parameters:
     - http2
+  ingress:
+    enabled: true
+    path: /api
+    hostname: portal.kongeelabs.home.arpa
+    tls: kong-controlplane-portal-tls
+    ingressClassName: kong
+    annotations: 
+      cert-manager.io/cluster-issuer: "certman-selfsigned-issuer"
+      konghq.com/https-redirect-status-code: "301"
+      konghq.com/strip-path: "false"
+      konghq.com/protocols: "https"
+#     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+#     nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
 
 portal:
   enabled: true
-  type: NodePort
+  type: ClusterIP
   annotations:
     konghq.com/protocol: "https"
   ingress:
     enabled: true
     path: /
     hostname: portal.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
+    tls: kong-controlplane-portal-tls
+    ingressClassName: kong
     annotations:
-      konghq.com/protocols: "https"
-      kubernetes.io/ingress.class: "kong"
+      cert-manager.io/cluster-issuer: "certman-selfsigned-issuer"
       konghq.com/https-redirect-status-code: "301"
       konghq.com/strip-path: "false"
+      konghq.com/protocols: "https"
+     #kubernetes.io/ingress.class: "kong"
   http:
     enabled: false
     servicePort: 8003

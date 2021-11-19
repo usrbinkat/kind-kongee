@@ -18,8 +18,8 @@ env:
   nginx_worker_processes: "2"
   lua_package_path: /opt/?.lua;;
 
-  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
-  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  cluster_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  cluster_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
   lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt 
 
   cluster_control_plane: controlplane-kong-cluster.kong.svc.cluster.local:8005
@@ -36,9 +36,7 @@ enterprise:
   license_secret: kong-enterprise-license
 
 secretVolumes: 
-  - kong-cluster-cert
-# - kong-controlplane-services-tls
-# - kong-tls
+  - kong-controlplane-services-tls
 
 ################################
 ## Kind localhost hostport
@@ -67,7 +65,7 @@ proxy:
   enabled: true
   type: LoadBalancer   
   http:
-    enabled: false
+    enabled: true
     servicePort: 80
     containerPort: 8080
   tls:
