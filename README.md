@@ -82,10 +82,6 @@ kubectl create secret generic kong-postgres-password -n kong --dry-run=client -o
     --from-literal=pg_host="postgres-postgresql.kong.svc.cluster.local" \
   | kubectl apply -n kong -f -
 ```
-  - Deploy Postgres
-```sh
-helm upgrade --install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
-```
     
 #### 4) Deploy Kong Gateway Enterprise Edition in Hybrid Mode
   - Create hybrid dual plane mutual trust certificate
@@ -106,8 +102,9 @@ kubectl create secret tls kong-cluster-cert --namespace kong \
 ```sh
 kubectl apply -n kong -f ./kongee/kong-tls-selfsigned-cert.yml
 ```
-  - create kong gateway enterprise license secret
+  - create kong gateway enterprise license secret & Deploy Postgres
 ```sh
+helm upgrade --install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
 kubectl create secret generic kong-enterprise-license -n kong --from-file=license=${HOME}/.kong-license-data/license.json --dry-run=client -oyaml | kubectl apply -n kong -f -
 ```
   - Create `kong_admin` super user password secret
