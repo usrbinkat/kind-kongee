@@ -102,9 +102,8 @@ kubectl create secret tls kong-cluster-cert --namespace kong \
 ```sh
 kubectl apply -n kong -f ./kongee/kong-tls-selfsigned-cert.yml
 ```
-  - create kong gateway enterprise license secret & Deploy Postgres
+  - create kong gateway enterprise license secret
 ```sh
-helm upgrade --install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
 kubectl create secret generic kong-enterprise-license -n kong --from-file=license=${HOME}/.kong-license-data/license.json --dry-run=client -oyaml | kubectl apply -n kong -f -
 ```
   - Create `kong_admin` super user password secret
@@ -119,10 +118,11 @@ kubectl create secret generic kong-session-config -n kong \
     --dry-run=client -oyaml \
   | kubectl apply -f -
 ```
-  - Install Kong Data Plane & Control Plane
+  - Install Kong Data Plane & Control Plane & Deploy Postgres
 ```sh
-helm upgrade --install controlplane kong/kong --namespace kong --values ./kongee/controlplane.yml
-helm upgrade --install dataplane    kong/kong --namespace kong --values ./kongee/dataplane.yml
+helm upgrade --install postgres bitnami/postgresql --namespace kong --values ./postgres/values.yml
+helm upgrade --install controlplane kong/kong      --namespace kong --values ./kongee/controlplane.yml
+helm upgrade --install dataplane    kong/kong      --namespace kong --values ./kongee/dataplane.yml
 ```
     
 #### 5) Install Keycloak
