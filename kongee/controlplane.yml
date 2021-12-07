@@ -149,7 +149,7 @@ migrations:
 
 admin:
   enabled: true
-  type: NodePort
+  type: ClusterIP
   annotations:
     konghq.com/protocol: "https"
   ingress:
@@ -158,13 +158,14 @@ admin:
     hostname: manager.kongeelabs.home.arpa
     tls: kong-controlplane-services-tls
     annotations:
-      kubernetes.io/ingress.class: "public"
+      kubernetes.io/ingress.class: "kong"
+      #kubernetes.io/ingress.class: "nginx"
+      konghq.com/protocols: "https"
+      konghq.com/strip-path: "true"
+      konghq.com/https-redirect-status-code: "301"
+      nginx.ingress.kubernetes.io/app-root: "/"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-     #konghq.com/protocols: "https"
-     #konghq.com/strip-path: "true"
-     #konghq.com/https-redirect-status-code: "301"
-     #nginx.ingress.kubernetes.io/app-root: "/"
-     #nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
+      nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
   http:
     enabled: false
   tls:
@@ -176,16 +177,17 @@ admin:
 
 manager:
   enabled: true
-  type: NodePort
-# annotations:
-#   konghq.com/protocol: "https"
+  type: ClusterIP
+  annotations:
+    konghq.com/protocol: "https"
   ingress:
     enabled: true
     path: /
     hostname: manager.kongeelabs.home.arpa
     tls: kong-controlplane-services-tls
     annotations:
-      kubernetes.io/ingress.class: "public"
+      kubernetes.io/ingress.class: "kong"
+      #kubernetes.io/ingress.class: "nginx"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
   http:
     enabled: false
@@ -225,7 +227,7 @@ portalapi:
 
 portal:
   enabled: true
-  type: NodePort
+  type: ClusterIP
   annotations:
     konghq.com/protocol: "https"
   ingress:
