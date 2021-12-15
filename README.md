@@ -53,7 +53,7 @@ kind create cluster --config platform/kind/config.yml
 ```
   - Install Kube Prometheus for Kontena Lens metrics
 ```sh
-helm install kube-prometheus bitnami/kube-prometheus --namespace prometheus --create-namespace
+helm upgrade --install kube-prometheus bitnami/kube-prometheus --namespace prometheus --create-namespace
 ```
   - Create Kong Namespaces
 ```sh
