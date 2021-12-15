@@ -91,7 +91,7 @@ docker run -it --rm --pull always --user root --volume /tmp/kong:/tmp/kong:z \
     docker.io/kong/kong -- \
   kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
 ```
-  - Create hubrid certificates secret
+  - Create hybrid certificates secret
 ```sh
 sudo chown $USER -R /tmp/{kong,kong/*}
 kubectl create secret tls kong-cluster-cert --namespace kong \
@@ -128,7 +128,7 @@ helm upgrade --install dataplane    kong/kong      --namespace kong --values ./k
 #### 5) Install Keycloak
   - Deploy Operator, Certs, Realm, & Client
 ```sh
-kubectl kustomize keycloak | kubectl apply -f - ; sleep 6 ; kubectl kustomize keycloak | kubectl apply -f - ; sleep 6 ; kubectl kustomize keycloak | kubectl apply -f -
+until kubectl kustomize keycloak | kubectl apply -f - ;do sleep 3 ; done
 ```
   - Create ingress for Keycloak web console
 ```sh 
@@ -142,7 +142,11 @@ kubectl apply -n keycloak -f ./keycloak/ingress.yml
   - Test Kong Admin API
   - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
 ```
-http --verify=no https://manager.kongeelabs.home.arpa/api kong-admin-token:$TOKEN
+# with HTTPIE
+http --verify=no https://manager.kongeelabs.home.arpa/api 'kong-admin-token:kong_admin'
+
+# with CURL
+curl -Lks https://manager.kongeelabs.home.arpa/api/openid-connect/issuers --header 'kong-admin-token:kong_admin'
 ```
   - Login to keycloak with username `admin` @ https://keycloak.kongeelabs.home.arpa
   - Lookup Keycloak admin password
