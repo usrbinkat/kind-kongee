@@ -53,7 +53,7 @@ kind create cluster --config platform/kind/config.yml
 ```
   - Install Kube Prometheus for Kontena Lens metrics
 ```sh
-helm install kube-prometheus bitnami/kube-prometheus --namespace prometheus --create-namespace
+helm upgrade --install kube-prometheus bitnami/kube-prometheus --namespace prometheus --create-namespace
 ```
   - Create Kong Namespaces
 ```sh
@@ -128,7 +128,7 @@ helm upgrade --install dataplane    kong/kong      --namespace kong --values ./k
 #### 5) Install Keycloak
   - Deploy Operator, Certs, Realm, & Client
 ```sh
-kubectl kustomize keycloak | kubectl apply -f - ; sleep 6 ; kubectl kustomize keycloak | kubectl apply -f - ; sleep 6 ; kubectl kustomize keycloak | kubectl apply -f -
+until kubectl kustomize keycloak | kubectl apply -f - ;do sleep 3 ; done
 ```
   - Create ingress for Keycloak web console
 ```sh 
