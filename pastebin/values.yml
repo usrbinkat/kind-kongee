@@ -1,3 +1,4 @@
+# helm repo add privatebin https://privatebin.github.io/helm-chart && helm repo update
 # helm install pastebin privatebin/privatebin --namespace pastebin --create-namespace --values pastebin/values.yml
 # pip install pbincli
 #

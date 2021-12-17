@@ -139,10 +139,8 @@ kubectl apply -n keycloak -f ./keycloak/ingress.yml
 #### Final) Test Services
   - Open Kong Manager in browser: https://manager.kongeelabs.home.arpa    
   - NOTE: login to web gui with user:pass `kong_admin`:`kong_admin`
-  - Test Kong Admin API
-  - TOKEN: find on web gui > top right > user drop menu > profile > bottom of page > Reset Token button
 ```
-http --verify=no https://manager.kongeelabs.home.arpa/api kong-admin-token:$TOKEN
+http --verify=no https://manager.kongeelabs.home.arpa/api kong-admin-token:kong_admin
 ```
   - Login to keycloak with username `admin` @ https://keycloak.kongeelabs.home.arpa
   - Lookup Keycloak admin password
