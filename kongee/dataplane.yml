@@ -4,7 +4,7 @@ namespace: kong
 replicaCount: 1
 image:
   repository: kong/kong-gateway
-  tag: "2.6"
+  tag: "2.7"
 deployment:
   kong:
     enabled: true
@@ -20,7 +20,7 @@ env:
 
   cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
   cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
-  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt 
+  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt
 
   cluster_control_plane: controlplane-kong-cluster.kong.svc.cluster.local:8005
   cluster_telemetry_endpoint: controlplane-kong-clustertelemetry.kong.svc.cluster.local:8006
@@ -35,7 +35,7 @@ enterprise:
   enabled: true
   license_secret: kong-enterprise-license
 
-secretVolumes: 
+secretVolumes:
   - kong-cluster-cert
 # - kong-controlplane-services-tls
 # - kong-tls
@@ -65,7 +65,7 @@ proxy:
 ## MetalLB LoadBalancer
 #proxy:
 #  enabled: true
-#  type: LoadBalancer   
+#  type: LoadBalancer
 #  http:
 #    enabled: false
 #    servicePort: 80

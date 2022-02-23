@@ -3,7 +3,7 @@ namespace: kong
 replicaCount: 1
 image:
   repository: kong/kong-gateway
-  tag: "2.6"
+  tag: "2.7"
 deployment:
   kong:
     enabled: true
@@ -40,13 +40,14 @@ env:
       secretKeyRef:
          name: kong-postgres-password
          key: password
-  pg_host: "postgres-postgresql.kong.svc.cluster.local"
-  pg_ssl_version: tlsv1_2
-  pg_ssl: on
+  pg_host: "postgres.kong.svc.cluster.local"
+  pg_ssl: off
+  pg_ssl_verify: off
+  #pg_ssl_version: tlsv1_2
 
   cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
   cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
-  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt 
+  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt
 
   vitals: on
   admin_gui_protocol: https
@@ -79,7 +80,7 @@ env:
         name: kong-session-config
         key: portal_session_conf
 
-secretVolumes: 
+secretVolumes:
   - kong-cluster-cert
   - kong-controlplane-services-tls
 
@@ -116,15 +117,6 @@ enterprise:
   smtp:
     enabled: false
 
-status:
-  enabled: true
-  http:
-    enabled: true
-    containerPort: 8100
-  tls:
-    enabled: false
-    containerPort: 8543
-
 ingressController:
   enabled: true
   installCRDs: false
@@ -146,6 +138,15 @@ migrations:
   annotations:
     sidecar.istio.io/inject: false
     kuma.io/sidecar-injection: "disabled"
+
+status:
+  enabled: true
+  http:
+    enabled: true
+    containerPort: 8100
+  tls:
+    enabled: false
+    containerPort: 8543
 
 admin:
   enabled: true

@@ -91,7 +91,7 @@ docker run -it --rm --pull always --user root --volume /tmp/kong:/tmp/kong:z \
     docker.io/kong/kong -- \
   kong hybrid gen_cert /tmp/kong/tls.crt /tmp/kong/tls.key
 ```
-  - Create hubrid certificates secret
+  - Create hybrid certificates secret
 ```sh
 sudo chown $USER -R /tmp/{kong,kong/*}
 kubectl create secret tls kong-cluster-cert --namespace kong \
