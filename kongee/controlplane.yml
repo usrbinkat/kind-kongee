@@ -38,7 +38,7 @@ env:
   pg_password:
     valueFrom:
       secretKeyRef:
-         name: kong-postgres-password
+         name: kong-postgres-config
          key: password
   pg_host: "postgres.kong.svc.cluster.local"
   pg_ssl: off
