@@ -1,103 +1,6 @@
-# https://docs.konghq.com/kubernetes-ingress-controller/2.0.x/troubleshooting/#inspecting-network-traffic-with-a-tcpdump-sidecar
-# helm install dataplane kong/kong --namespace kong --values ./dataplane.yml --set ingressController.installCRDs=false
-namespace: kong
-replicaCount: 1
-image:
-  repository: kong/kong-gateway
-  tag: "2.7"
-deployment:
-  kong:
-    enabled: true
-    daemonset: false
-env:
-  role: data_plane
-  database: "off"
-  plugins: "bundled,openid-connect"
-  log_level: debug
-  prefix: /kong_prefix/
-  nginx_worker_processes: "2"
-  lua_package_path: /opt/?.lua;;
-
-  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
-  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
-  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt
-
-  cluster_control_plane: controlplane-kong-cluster.kong.svc.cluster.local:8005
-  cluster_telemetry_endpoint: controlplane-kong-clustertelemetry.kong.svc.cluster.local:8006
-
-  proxy_stream_access_log: /dev/stdout
-  proxy_stream_error_log: /dev/stdout
-  status_error_log: /dev/stdout
-  proxy_access_log: /dev/stdout
-  proxy_error_log: /dev/stdout
-
-enterprise:
-  enabled: true
-  license_secret: kong-enterprise-license
-
-secretVolumes:
-  - kong-cluster-cert
-# - kong-controlplane-services-tls
-# - kong-tls
-
-################################
-## Kind localhost hostport
-proxy:
- enabled: true
- type: ClusterIP
- http:
-   enabled: true
-   hostPort: 80
-   containerPort: 8080
- tls:
-   enabled: true
-   hostPort: 443
-   containerPort: 8443
- ingress:
-   enabled: false
- labels:
-   enable-metrics: true
- annotations:
-   prometheus.io/port: "9542"
-   prometheus.io/scrape: "true"
-
-################################
-## MetalLB LoadBalancer
-#proxy:
-#  enabled: true
-#  type: LoadBalancer
-#  http:
-#    enabled: false
-#    servicePort: 80
-#    containerPort: 8080
-#  tls:
-#    enabled: true
-#    servicePort: 443
-#    containerPort: 8443
-#  ingress:
-#    enabled: false
-#  labels:
-#    enable-metrics: true
-#  annotations:
-#    prometheus.io/port: "9542"
-#    prometheus.io/scrape: "true"
-
+USER-SUPPLIED VALUES:
 admin:
   enabled: false
-portal:
-  enabled: false
-cluster:
-  enabled: false
-manager:
-  enabled: false
-portalapi:
-  enabled: false
-migrations:
-  preUpgrade: false
-  postUpgrade: false
-ingressController:
-  enabled: false
-  installCRDs: false
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
@@ -110,3 +13,67 @@ affinity:
             - dataplane
         topologyKey: kubernetes.io/hostname
       weight: 100
+cluster:
+  enabled: false
+deployment:
+  kong:
+    daemonset: false
+    enabled: true
+enterprise:
+  enabled: true
+  license_secret: kong-enterprise-license
+env:
+  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  cluster_control_plane: controlplane-kong-cluster.kong.svc.cluster.local:8005
+  cluster_telemetry_endpoint: controlplane-kong-clustertelemetry.kong.svc.cluster.local:8006
+  database: "off"
+  log_level: debug
+  lua_package_path: /opt/?.lua;;
+  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt
+  nginx_worker_processes: "2"
+  plugins: bundled,openid-connect
+  prefix: /kong_prefix/
+  proxy_access_log: /dev/stdout
+  proxy_error_log: /dev/stdout
+  proxy_stream_access_log: /dev/stdout
+  proxy_stream_error_log: /dev/stdout
+  role: data_plane
+  status_error_log: /dev/stdout
+image:
+  repository: kong/kong-gateway
+  tag: "2.7"
+ingressController:
+  enabled: false
+  installCRDs: false
+manager:
+  enabled: false
+migrations:
+  postUpgrade: false
+  preUpgrade: false
+namespace: kong
+portal:
+  enabled: false
+portalapi:
+  enabled: false
+proxy:
+  annotations:
+    prometheus.io/port: "9542"
+    prometheus.io/scrape: "true"
+  enabled: true
+  http:
+    containerPort: 8080
+    enabled: true
+    hostPort: 80
+  ingress:
+    enabled: false
+  labels:
+    enable-metrics: true
+  tls:
+    containerPort: 8443
+    enabled: true
+    hostPort: 443
+  type: ClusterIP
+replicaCount: 1
+secretVolumes:
+- kong-cluster-cert

@@ -42,13 +42,15 @@ controller:
 ingress:
   enabled: true
   annotations:
+    konghq.com/path: "/"
     konghq.com/protocols: https
-    kubernetes.io/ingress.class: kong
+    konghq.com/strip-path: "true"
     konghq.com/https-redirect-status-code: "301"
     cert-manager.io/cluster-issuer: certman-selfsigned-issuer
-    cert-manager.io/common-name: "paste.kongeelabs.home.arpa"
+    cert-manager.io/common-name: "paste.kind.home.arpa"
+    kubernetes.io/ingress.class: kong
   hosts:
-    - host: paste.kongeelabs.home.arpa
+    - host: paste.kind.home.arpa
       paths: ["/"]
 # tls: paste.kongeelabs.home.arpa
 #   - secretName: chart-example-tls

@@ -1,253 +1,232 @@
-# helm install controlplane kong/kong --namespace kong --values ./controlplane.yml --set ingressController.installCRDs=false
-namespace: kong
-replicaCount: 1
-image:
-  repository: kong/kong-gateway
-  tag: "2.7"
-deployment:
-  kong:
+USER-SUPPLIED VALUES:
+admin:
+  annotations:
+    konghq.com/protocol: https
+  enabled: true
+  http:
+    enabled: false
+  ingress:
+    annotations:
+      konghq.com/https-redirect-status-code: "301"
+      konghq.com/protocols: https
+      konghq.com/strip-path: "true"
+      kubernetes.io/ingress.class: kong
+      nginx.ingress.kubernetes.io/app-root: /
+      nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+      nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
     enabled: true
-    daemonset: false
-env:
-  trusted_ips: "0.0.0.0/0,::/0"
-  role: control_plane
-  plugins: "bundled,openid-connect"
-  log_level: debug
-  nginx_worker_processes: "2"
-  status_listen:  0.0.0.0:8100
-  cluster_listen: 0.0.0.0:8005
-  cluster_telemetry_listen: 0.0.0.0:8006
-  cluster_data_plane_purge_delay: 60
-  lua_package_path: /opt/?.lua;;
-  prefix: /kong_prefix/
-  password:
-    valueFrom:
-      secretKeyRef:
-        name: kong-enterprise-superuser-password
-        key: password
-
-  proxy_stream_error_log: /dev/stdout
-  proxy_stream_access_log: /dev/stdout
-  status_error_log: /dev/stdout
-  proxy_access_log: /dev/stdout
-  proxy_error_log: /dev/stdout
-
-  database: "postgres"
-  pg_user: kong
-  pg_database: kong
-  pg_password:
-    valueFrom:
-      secretKeyRef:
-         name: kong-postgres-config
-         key: password
-  pg_host: "postgres.kong.svc.cluster.local"
-  pg_ssl: off
-  pg_ssl_verify: off
-  #pg_ssl_version: tlsv1_2
-
-  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
-  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
-  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt
-
-  vitals: on
-  admin_gui_protocol: https
-  admin_gui_url: "https://manager.kongeelabs.home.arpa/"
-  admin_api_uri: "https://manager.kongeelabs.home.arpa/api"
-  admin_gui_host: "manager.kongeelabs.home.arpa"
-  admin_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
-  admin_ssl_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
-  admin_gui_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
-  admin_gui_ssl_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
-  admin_gui_access_log: /dev/stdout
-  admin_gui_error_log: /dev/stdout
-  admin_access_log: /dev/stdout
-  admin_error_log: /dev/stdout
-
-  portal: on
-  portal_cors_origins: "*"
-  portal_gui_protocol: https
-  portal_gui_url: "https://portal.kongeelabs.home.arpa/"
-  portal_api_uri: "https://portal.kongeelabs.home.arpa/api"
-  portal_gui_host: "portal.kongeelabs.home.arpa"
-  portal_gui_access_log: /dev/stdout
-  portal_api_access_log: /dev/stdout
-  portal_gui_error_log: /dev/stdout
-  portal_api_error_log: /dev/stdout
-  portal_auth: basic-auth
-  portal_session_conf:
-    valueFrom:
-      secretKeyRef:
-        name: kong-session-config
-        key: portal_session_conf
-
-secretVolumes:
-  - kong-cluster-cert
-  - kong-controlplane-services-tls
-
-proxy:
-  enabled: false
-
+    hostname: manager.kongeelabs.home.arpa
+    path: /api
+    tls: kong-controlplane-services-tls
+  tls:
+    containerPort: 8444
+    enabled: true
+    parameters:
+    - http2
+    servicePort: 8444
+  type: ClusterIP
 cluster:
   enabled: true
   tls:
+    containerPort: 8005
     enabled: true
     servicePort: 8005
-    containerPort: 8005
-
 clustertelemetry:
   enabled: true
-  type: ClusterIP
   tls:
+    containerPort: 8006
     enabled: true
     servicePort: 8006
-    containerPort: 8006
-
+  type: ClusterIP
+deployment:
+  kong:
+    daemonset: false
+    enabled: true
 enterprise:
   enabled: true
   license_secret: kong-enterprise-license
-  vitals:
-    enabled: true
   portal:
     enabled: true
   rbac:
-    enabled: true
     admin_gui_auth: basic-auth
-    session_conf_secret: kong-session-config
     admin_gui_auth_conf_secret: kong-session-config
+    enabled: true
+    session_conf_secret: kong-session-config
   smtp:
     enabled: false
-
+  vitals:
+    enabled: true
+env:
+  admin_access_log: /dev/stdout
+  admin_api_uri: https://manager.kongeelabs.home.arpa/api
+  admin_error_log: /dev/stdout
+  admin_gui_access_log: /dev/stdout
+  admin_gui_error_log: /dev/stdout
+  admin_gui_host: manager.kongeelabs.home.arpa
+  admin_gui_protocol: https
+  admin_gui_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  admin_gui_ssl_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
+  admin_gui_url: https://manager.kongeelabs.home.arpa/
+  admin_ssl_cert: /etc/secrets/kong-controlplane-services-tls/tls.crt
+  admin_ssl_cert_key: /etc/secrets/kong-controlplane-services-tls/tls.key
+  cluster_cert: /etc/secrets/kong-cluster-cert/tls.crt
+  cluster_cert_key: /etc/secrets/kong-cluster-cert/tls.key
+  cluster_data_plane_purge_delay: 60
+  cluster_listen: 0.0.0.0:8005
+  cluster_telemetry_listen: 0.0.0.0:8006
+  database: postgres
+  log_level: debug
+  lua_package_path: /opt/?.lua;;
+  lua_ssl_trusted_certificate: /etc/ssl/certs/ca-certificates.crt
+  nginx_worker_processes: "2"
+  password:
+    valueFrom:
+      secretKeyRef:
+        key: password
+        name: kong-enterprise-superuser-password
+  pg_database: kong
+  pg_host: postgres.kong.svc.cluster.local
+  pg_password:
+    valueFrom:
+      secretKeyRef:
+        key: password
+        name: kong-postgres-config
+  pg_ssl: false
+  pg_ssl_verify: false
+  pg_user: kong
+  plugins: bundled,openid-connect
+  portal: true
+  portal_api_access_log: /dev/stdout
+  portal_api_error_log: /dev/stdout
+  portal_api_uri: https://portal.kongeelabs.home.arpa/api
+  portal_auth: basic-auth
+  portal_cors_origins: '*'
+  portal_gui_access_log: /dev/stdout
+  portal_gui_error_log: /dev/stdout
+  portal_gui_host: portal.kongeelabs.home.arpa
+  portal_gui_protocol: https
+  portal_gui_url: https://portal.kongeelabs.home.arpa/
+  portal_session_conf:
+    valueFrom:
+      secretKeyRef:
+        key: portal_session_conf
+        name: kong-session-config
+  prefix: /kong_prefix/
+  proxy_access_log: /dev/stdout
+  proxy_error_log: /dev/stdout
+  proxy_stream_access_log: /dev/stdout
+  proxy_stream_error_log: /dev/stdout
+  role: control_plane
+  status_error_log: /dev/stdout
+  status_listen: 0.0.0.0:8100
+  trusted_ips: 0.0.0.0/0,::/0
+  vitals: true
+image:
+  repository: kong/kong-gateway
+  tag: "2.7"
 ingressController:
   enabled: true
-  installCRDs: false
   env:
-    publish_service: kong/dataplane-kong-proxy
     kong_admin_tls_skip_verify: true
     kong_admin_token:
       valueFrom:
         secretKeyRef:
-          name: kong-enterprise-superuser-password
           key: password
-
+          name: kong-enterprise-superuser-password
+    publish_service: kong/dataplane-kong-proxy
+  installCRDs: false
+manager:
+  annotations:
+    konghq.com/protocol: https
+  enabled: true
+  http:
+    containerPort: 8002
+    enabled: false
+    servicePort: 8002
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: kong
+      nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    enabled: true
+    hostname: manager.kongeelabs.home.arpa
+    path: /
+    tls: kong-controlplane-services-tls
+  tls:
+    containerPort: 8445
+    enabled: true
+    parameters:
+    - http2
+    servicePort: 8445
+  type: ClusterIP
+migrations:
+  annotations:
+    kuma.io/sidecar-injection: disabled
+    sidecar.istio.io/inject: false
+  postUpgrade: true
+  preUpgrade: true
+namespace: kong
 podAnnotations:
   kuma.io/gateway: enabled
-
-migrations:
-  preUpgrade: true
-  postUpgrade: true
+portal:
   annotations:
-    sidecar.istio.io/inject: false
-    kuma.io/sidecar-injection: "disabled"
-
+    konghq.com/protocol: https
+  enabled: true
+  http:
+    containerPort: 8003
+    enabled: false
+    servicePort: 8003
+  ingress:
+    annotations:
+      konghq.com/https-redirect-status-code: "301"
+      konghq.com/protocols: https
+      konghq.com/strip-path: "false"
+      kubernetes.io/ingress.class: kong
+    enabled: true
+    hostname: portal.kongeelabs.home.arpa
+    path: /
+    tls: kong-controlplane-services-tls
+  tls:
+    containerPort: 8446
+    enabled: true
+    parameters:
+    - http2
+    servicePort: 8446
+  type: ClusterIP
+portalapi:
+  annotations:
+    konghq.com/protocol: https
+  enabled: true
+  http:
+    enabled: false
+  ingress:
+    annotations:
+      konghq.com/https-redirect-status-code: "301"
+      konghq.com/protocols: https
+      konghq.com/strip-path: "true"
+      kubernetes.io/ingress.class: kong
+      nginx.ingress.kubernetes.io/app-root: /
+    enabled: true
+    hostname: portal.kongeelabs.home.arpa
+    path: /api
+    tls: kong-controlplane-services-tls
+  tls:
+    containerPort: 8447
+    enabled: true
+    parameters:
+    - http2
+    servicePort: 8447
+  type: ClusterIP
+proxy:
+  enabled: false
+replicaCount: 1
+secretVolumes:
+- kong-cluster-cert
+- kong-controlplane-services-tls
 status:
   enabled: true
   http:
-    enabled: true
     containerPort: 8100
+    enabled: true
   tls:
-    enabled: false
     containerPort: 8543
-
-admin:
-  enabled: true
-  type: ClusterIP
-  annotations:
-    konghq.com/protocol: "https"
-  ingress:
-    enabled: true
-    path: /api
-    hostname: manager.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
-    annotations:
-      kubernetes.io/ingress.class: "kong"
-      #kubernetes.io/ingress.class: "nginx"
-      konghq.com/protocols: "https"
-      konghq.com/strip-path: "true"
-      konghq.com/https-redirect-status-code: "301"
-      nginx.ingress.kubernetes.io/app-root: "/"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-      nginx.ingress.kubernetes.io/permanent-redirect-code: "301"
-  http:
     enabled: false
-  tls:
-    enabled: true
-    servicePort: 8444
-    containerPort: 8444
-    parameters:
-    - http2
-
-manager:
-  enabled: true
-  type: ClusterIP
-  annotations:
-    konghq.com/protocol: "https"
-  ingress:
-    enabled: true
-    path: /
-    hostname: manager.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
-    annotations:
-      kubernetes.io/ingress.class: "kong"
-      #kubernetes.io/ingress.class: "nginx"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-  http:
-    enabled: false
-    servicePort: 8002
-    containerPort: 8002
-  tls:
-    enabled: true
-    servicePort: 8445
-    containerPort: 8445
-    parameters:
-    - http2
-
-portalapi:
-  enabled: true
-  type: ClusterIP
-  annotations:
-    konghq.com/protocol: "https"
-  ingress:
-    enabled: true
-    path: /api
-    hostname: portal.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
-    annotations:
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/protocols: "https"
-      konghq.com/strip-path: "true"
-      nginx.ingress.kubernetes.io/app-root: "/"
-      konghq.com/https-redirect-status-code: "301"
-  http:
-    enabled: false
-  tls:
-    enabled: true
-    servicePort: 8447
-    containerPort: 8447
-    parameters:
-    - http2
-
-portal:
-  enabled: true
-  type: ClusterIP
-  annotations:
-    konghq.com/protocol: "https"
-  ingress:
-    enabled: true
-    path: /
-    hostname: portal.kongeelabs.home.arpa
-    tls: kong-controlplane-services-tls
-    annotations:
-      konghq.com/protocols: "https"
-      kubernetes.io/ingress.class: "kong"
-      konghq.com/https-redirect-status-code: "301"
-      konghq.com/strip-path: "false"
-  http:
-    enabled: false
-    servicePort: 8003
-    containerPort: 8003
-  tls:
-    enabled: true
-    servicePort: 8446
-    containerPort: 8446
-    parameters:
-    - http2
